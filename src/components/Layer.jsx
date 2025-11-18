@@ -78,6 +78,22 @@ function Layer({ layer }) {
     } : { r: 0, g: 255, b: 0 }
   }
 
+  const buildFilterString = () => {
+    const f = layer.filters
+    const filters = []
+    
+    if (f.blur > 0) filters.push(`blur(${f.blur}px)`)
+    if (f.brightness !== 100) filters.push(`brightness(${f.brightness}%)`)
+    if (f.contrast !== 100) filters.push(`contrast(${f.contrast}%)`)
+    if (f.saturate !== 100) filters.push(`saturate(${f.saturate}%)`)
+    if (f.hueRotate !== 0) filters.push(`hue-rotate(${f.hueRotate}deg)`)
+    if (f.grayscale > 0) filters.push(`grayscale(${f.grayscale}%)`)
+    if (f.sepia > 0) filters.push(`sepia(${f.sepia}%)`)
+    if (f.invert > 0) filters.push(`invert(${f.invert}%)`)
+    
+    return filters.length > 0 ? filters.join(' ') : 'none'
+  }
+
   const layerStyle = {
     position: 'absolute',
     top: '50%',
@@ -85,6 +101,7 @@ function Layer({ layer }) {
     transform: `translate(-50%, -50%) translate(${layer.position.x}px, ${layer.position.y}px) scale(${layer.scale}) rotate(${layer.rotation}deg)`,
     opacity: layer.opacity,
     mixBlendMode: layer.blendMode,
+    filter: buildFilterString(),
     pointerEvents: 'none',
   }
 
