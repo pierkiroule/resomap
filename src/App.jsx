@@ -23,6 +23,16 @@ function App() {
         threshold: 0.4,
         smoothness: 0.1
       },
+      filters: {
+        blur: 0,
+        brightness: 100,
+        contrast: 100,
+        saturate: 100,
+        hueRotate: 0,
+        grayscale: 0,
+        sepia: 0,
+        invert: 0
+      },
       position: { x: 0, y: 0 },
       scale: 1,
       rotation: 0

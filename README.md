@@ -5,12 +5,17 @@ Une webapp React moderne pour créer des compositions multimédias immersives av
 ## ✨ Fonctionnalités
 
 - **🎨 Éditeur Multi-Calques** : Superposez et organisez différents types de médias
-- **👁️ Viewer en Temps Réel** : Visualisez vos créations instantanément
+- **👁️ Viewer en Temps Réel** : Visualisez vos créations instantanément avec différents fonds
 - **📁 Support Multi-Format** : Images (JPG, PNG, GIF), Vidéos (MP4, WebM), Audio (MP3, WAV)
 - **🎭 Effets Avancés** :
-  - Chromakey (fond vert/bleu) avec contrôle de seuil et lissage
-  - 12 modes de fusion (overlay, multiply, screen, etc.)
-  - Opacité, rotation, échelle par calque
+  - **Chromakey** (fond vert/bleu) avec contrôle de seuil et lissage
+  - **12 modes de fusion** (overlay, multiply, screen, etc.)
+  - **8 filtres visuels** : Blur, Brightness, Contrast, Saturate, Hue Rotate, Grayscale, Sepia, Invert
+  - **4 presets de filtres** : Vibrant, Dramatique, Noir & Blanc, Vintage
+  - **Opacité, rotation, échelle** par calque
+- **🎨 Gestion des Transparences** : 
+  - 4 types de fond : Noir, Blanc, Grille de transparence, Dégradé
+  - Visualisation optimale des effets d'overlay et de mélange
 - **🎬 Interface Moderne** : Design élégant avec animations fluides
 
 ## 🚀 Installation
@@ -30,18 +35,28 @@ npm run build
 
 1. **Importer des Médias** : Cliquez sur "📁 Importer Média" pour ajouter des fichiers
 2. **Organiser les Calques** : Utilisez les flèches ⬆️⬇️ pour réorganiser l'ordre
-3. **Ajuster les Propriétés** :
+3. **Ajuster les Propriétés de Base** :
    - Sélectionnez un calque pour modifier ses propriétés
    - Ajustez l'opacité, l'échelle, la rotation
-   - Choisissez un mode de fusion
-4. **Appliquer le Chromakey** :
+   - Choisissez un mode de fusion parmi 12 options
+4. **Appliquer des Filtres Visuels** :
+   - Utilisez les 8 filtres disponibles (blur, brightness, contrast, etc.)
+   - Essayez les 4 presets : ☀️ Vibrant, 🌙 Dramatique, ⚫ Noir & Blanc, 📜 Vintage
+   - Réinitialisez les filtres avec le bouton 🔄 Reset
+5. **Appliquer le Chromakey** :
    - Activez le chromakey dans les propriétés
    - Sélectionnez la couleur à supprimer
    - Ajustez le seuil et le lissage
-5. **Profitez du Résultat** : Votre composition s'affiche en temps réel dans le viewer
+6. **Choisir le Fond** : 
+   - ⚫ Noir (par défaut)
+   - ⚪ Blanc
+   - 🔲 Grille de transparence
+   - 🌈 Dégradé
+7. **Profitez du Résultat** : Votre composition s'affiche en temps réel dans le viewer
 
-## 🎨 Modes de Fusion Disponibles
+## 🎨 Effets Disponibles
 
+### Modes de Fusion
 - Normal
 - Multiply
 - Screen
@@ -50,6 +65,22 @@ npm run build
 - Color Dodge / Color Burn
 - Hard Light / Soft Light
 - Difference / Exclusion
+
+### Filtres CSS
+- **Blur** : Flou artistique (0-20px)
+- **Brightness** : Luminosité (0-200%)
+- **Contrast** : Contraste (0-200%)
+- **Saturate** : Saturation des couleurs (0-200%)
+- **Hue Rotate** : Rotation de teinte (0-360°)
+- **Grayscale** : Niveaux de gris (0-100%)
+- **Sepia** : Effet sépia vintage (0-100%)
+- **Invert** : Inversion des couleurs (0-100%)
+
+### Presets de Filtres
+- ☀️ **Vibrant** : +20% luminosité, +10% contraste, +20% saturation
+- 🌙 **Dramatique** : -10% luminosité, +20% contraste, -20% saturation
+- ⚫ **Noir & Blanc** : 100% grayscale, +10% contraste
+- 📜 **Vintage** : 80% sépia, +10% luminosité
 
 ## 🛠️ Technologies
 
@@ -79,6 +110,9 @@ resomap/
 
 - **Chromakey en Temps Réel** : Utilise Canvas API pour le traitement d'image pixel par pixel
 - **Support Vidéo** : Traitement frame par frame pour l'effet chromakey sur vidéos
+- **Filtres CSS Combinés** : Application de multiples filtres simultanément pour des effets complexes
+- **Modes de Fusion Avancés** : Utilise CSS `mix-blend-mode` pour des mélanges professionnels
+- **Gestion des Transparences** : Plusieurs types de fond pour visualiser les effets alpha
 - **Gestion d'État Réactive** : Mise à jour instantanée du viewer
 - **Performance Optimisée** : Rendu efficace avec React
 

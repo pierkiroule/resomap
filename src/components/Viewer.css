@@ -12,6 +12,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .viewer-header h2 {
@@ -20,12 +21,52 @@
   font-weight: 600;
 }
 
+.viewer-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .viewer-info {
   color: #a8b2d1;
   font-size: 0.9rem;
   background: rgba(102, 126, 234, 0.2);
   padding: 0.4rem 1rem;
   border-radius: 20px;
+  white-space: nowrap;
+}
+
+.backdrop-buttons {
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(15, 52, 96, 0.5);
+  padding: 0.3rem;
+  border-radius: 8px;
+}
+
+.backdrop-btn {
+  width: 36px;
+  height: 36px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backdrop-btn:hover {
+  background: rgba(102, 126, 234, 0.3);
+  transform: scale(1.1);
+}
+
+.backdrop-btn.active {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.4);
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
 }
 
 .canvas-container {

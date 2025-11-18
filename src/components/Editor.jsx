@@ -120,6 +120,185 @@ function Editor({
             </label>
           </div>
 
+          <div className="property-group filters-section">
+            <div className="section-header">
+              <h4>🎨 Filtres Visuels</h4>
+              <button 
+                className="reset-btn"
+                onClick={() => onUpdateLayer(selectedLayer.id, {
+                  filters: {
+                    blur: 0,
+                    brightness: 100,
+                    contrast: 100,
+                    saturate: 100,
+                    hueRotate: 0,
+                    grayscale: 0,
+                    sepia: 0,
+                    invert: 0
+                  }
+                })}
+                title="Réinitialiser les filtres"
+              >
+                🔄 Reset
+              </button>
+            </div>
+
+            <div className="filter-presets">
+              <button 
+                className="preset-btn"
+                onClick={() => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, brightness: 120, contrast: 110, saturate: 120 }
+                })}
+              >
+                ☀️ Vibrant
+              </button>
+              <button 
+                className="preset-btn"
+                onClick={() => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, brightness: 90, contrast: 120, saturate: 80 }
+                })}
+              >
+                🌙 Dramatique
+              </button>
+              <button 
+                className="preset-btn"
+                onClick={() => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, grayscale: 100, contrast: 110 }
+                })}
+              >
+                ⚫ Noir & Blanc
+              </button>
+              <button 
+                className="preset-btn"
+                onClick={() => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, sepia: 80, brightness: 110 }
+                })}
+              >
+                📜 Vintage
+              </button>
+            </div>
+            
+            <label>
+              <span>Flou (Blur)</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="20" 
+                step="0.5"
+                value={selectedLayer.filters.blur}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, blur: parseFloat(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.blur.toFixed(1)}px</span>
+            </label>
+
+            <label>
+              <span>Luminosité</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="200" 
+                step="1"
+                value={selectedLayer.filters.brightness}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, brightness: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.brightness}%</span>
+            </label>
+
+            <label>
+              <span>Contraste</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="200" 
+                step="1"
+                value={selectedLayer.filters.contrast}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, contrast: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.contrast}%</span>
+            </label>
+
+            <label>
+              <span>Saturation</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="200" 
+                step="1"
+                value={selectedLayer.filters.saturate}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, saturate: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.saturate}%</span>
+            </label>
+
+            <label>
+              <span>Teinte (Hue Rotate)</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="360" 
+                step="1"
+                value={selectedLayer.filters.hueRotate}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, hueRotate: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.hueRotate}°</span>
+            </label>
+
+            <label>
+              <span>Niveaux de Gris</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                step="1"
+                value={selectedLayer.filters.grayscale}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, grayscale: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.grayscale}%</span>
+            </label>
+
+            <label>
+              <span>Sépia</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                step="1"
+                value={selectedLayer.filters.sepia}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, sepia: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.sepia}%</span>
+            </label>
+
+            <label>
+              <span>Inversion</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                step="1"
+                value={selectedLayer.filters.invert}
+                onChange={(e) => onUpdateLayer(selectedLayer.id, {
+                  filters: { ...selectedLayer.filters, invert: parseInt(e.target.value) }
+                })}
+              />
+              <span className="value">{selectedLayer.filters.invert}%</span>
+            </label>
+          </div>
+
           <div className="property-group chromakey-section">
             <label className="checkbox-label">
               <input 
