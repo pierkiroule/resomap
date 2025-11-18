@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import LayerPanel from './LayerPanel'
+import AudioReactiveControl from './AudioReactiveControl'
 import './Editor.css'
 
 function Editor({ 

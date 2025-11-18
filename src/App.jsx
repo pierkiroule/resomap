@@ -1,11 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Editor from './components/Editor'
 import Viewer from './components/Viewer'
+import AudioAnalyzer from './utils/AudioAnalyzer'
 import './App.css'
 
 function App() {
   const [layers, setLayers] = useState([])
   const [selectedLayerId, setSelectedLayerId] = useState(null)
+  const [audioData, setAudioData] = useState({ bass: 0, mid: 0, high: 0, overall: 0 })
+  const audioAnalyzerRef = useRef(null)
+  const animationFrameRef = useRef(null)
+
+  useEffect(() => {
+    // Initialize audio analyzer
+    audioAnalyzerRef.current = new AudioAnalyzer()
+    
+    // Animation loop for audio analysis
+    const updateAudioData = () => {
+      if (audioAnalyzerRef.current) {
+        const data = audioAnalyzerRef.current.getFrequencyData()
+        setAudioData(data)
+      }
+      animationFrameRef.current = requestAnimationFrame(updateAudioData)
+    }
+    
+    updateAudioData()
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+      if (audioAnalyzerRef.current) {
+        audioAnalyzerRef.current.destroy()
+      }
+    }
+  }, [])
 
   const addLayer = (file) => {
     const newLayer = {
@@ -32,6 +61,14 @@ function App() {
         grayscale: 0,
         sepia: 0,
         invert: 0
+      },
+      audioReactive: {
+        opacity: { enabled: false, source: 'overall', min: 0, max: 1, intensity: 1 },
+        scale: { enabled: false, source: 'bass', min: 0.8, max: 1.5, intensity: 1 },
+        rotation: { enabled: false, source: 'mid', min: 0, max: 360, intensity: 1 },
+        blur: { enabled: false, source: 'high', min: 0, max: 10, intensity: 1 },
+        brightness: { enabled: false, source: 'overall', min: 80, max: 150, intensity: 1 },
+        hueRotate: { enabled: false, source: 'overall', min: 0, max: 360, intensity: 1 }
       },
       position: { x: 0, y: 0 },
       scale: 1,
@@ -84,6 +121,8 @@ function App() {
         />
         <Viewer 
           layers={layers}
+          audioData={audioData}
+          audioAnalyzer={audioAnalyzerRef.current}
         />
       </div>
     </div>
