@@ -195,3 +195,91 @@
   background: rgba(255, 82, 82, 0.3);
   transform: scale(1.1);
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .performance-recorder {
+    padding: 0.8rem;
+  }
+
+  .rec-btn {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .snapshot-btn {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .recording-indicator {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .recordings-list {
+    max-height: 200px;
+  }
+
+  .recordings-list h4 {
+    font-size: 0.85rem;
+  }
+
+  .recording-item {
+    padding: 0.6rem;
+  }
+
+  .rec-icon {
+    font-size: 1.3rem;
+  }
+
+  .rec-name {
+    font-size: 0.85rem;
+  }
+
+  .rec-duration {
+    font-size: 0.7rem;
+  }
+
+  .play-btn,
+  .delete-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .performance-recorder {
+    padding: 0.6rem;
+  }
+
+  .recorder-controls {
+    flex-direction: column;
+  }
+
+  .rec-btn,
+  .snapshot-btn {
+    width: 100%;
+  }
+
+  .recordings-list {
+    max-height: 180px;
+  }
+
+  .recording-item {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .rec-actions {
+    gap: 0.3rem;
+  }
+
+  .play-btn,
+  .delete-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+}

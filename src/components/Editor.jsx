@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import LayerPanel from './LayerPanel'
 import AudioReactiveControl from './AudioReactiveControl'
 import PerformanceRecorder from './PerformanceRecorder'
+import MobileMenu from './MobileMenu'
 import './Editor.css'
 
 function Editor({ 
@@ -42,17 +43,20 @@ function Editor({
         />
       </div>
 
-      <LayerPanel 
-        layers={layers}
-        selectedLayerId={selectedLayerId}
-        onSelectLayer={onSelectLayer}
-        onDeleteLayer={onDeleteLayer}
-        onUpdateLayer={onUpdateLayer}
-        onReorderLayers={onReorderLayers}
-      />
+      <MobileMenu title="📚 Calques">
+        <LayerPanel 
+          layers={layers}
+          selectedLayerId={selectedLayerId}
+          onSelectLayer={onSelectLayer}
+          onDeleteLayer={onDeleteLayer}
+          onUpdateLayer={onUpdateLayer}
+          onReorderLayers={onReorderLayers}
+        />
+      </MobileMenu>
 
       {selectedLayer && (
-        <div className="layer-properties">
+        <MobileMenu title="⚙️ Propriétés">
+          <div className="layer-properties">
           <h3>Propriétés du Calque</h3>
           
           <div className="property-group">
@@ -360,12 +364,15 @@ function Editor({
             )}
           </div>
         </div>
+        </MobileMenu>
       )}
 
-      <PerformanceRecorder 
-        layers={layers}
-        onRestoreSnapshot={onRestoreSnapshot}
-      />
+      <MobileMenu title="🎬 Recording">
+        <PerformanceRecorder 
+          layers={layers}
+          onRestoreSnapshot={onRestoreSnapshot}
+        />
+      </MobileMenu>
     </div>
   )
 }

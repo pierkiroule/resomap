@@ -203,3 +203,78 @@
   cursor: pointer;
   accent-color: #667eea;
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .editor {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  .editor-toolbar {
+    padding: 0.8rem;
+  }
+
+  .import-btn {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .layer-properties {
+    padding: 0.8rem;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .property-group {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .property-group label > span:first-child {
+    font-size: 0.85rem;
+  }
+
+  .filter-presets {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+  }
+
+  .preset-btn {
+    padding: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .reset-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor {
+    max-height: 45vh;
+  }
+
+  .layer-properties h3 {
+    font-size: 0.95rem;
+  }
+
+  .property-group {
+    padding: 0.6rem;
+  }
+
+  .filter-presets {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .reset-btn {
+    width: 100%;
+  }
+}
