@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react'
 import Layer from './Layer'
+import TouchInteraction from './TouchInteraction'
 import './Viewer.css'
 
-function Viewer({ layers }) {
+function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer }) {
   const viewerRef = useRef(null)
-  const [backdrop, setBackdrop] = useState('black') // black, white, transparent, color
+  const [backdrop, setBackdrop] = useState('black')
+  const [isPerformanceMode, setIsPerformanceMode] = useState(false)
 
   const getCanvasStyle = () => {
     switch(backdrop) {
@@ -32,8 +34,33 @@ function Viewer({ layers }) {
   return (
     <div className="viewer" ref={viewerRef}>
       <div className="viewer-header">
-        <h2>🎨 Aperçu du Rêve</h2>
+        <h2>{isPerformanceMode ? '🎭 Mode Performance VJ' : '🎨 Aperçu du Rêve'}</h2>
         <div className="viewer-controls">
+          <button 
+            className={`performance-toggle ${isPerformanceMode ? 'active' : ''}`}
+            onClick={() => setIsPerformanceMode(!isPerformanceMode)}
+            title={isPerformanceMode ? 'Quitter le mode Performance' : 'Activer le mode Performance'}
+          >
+            {isPerformanceMode ? '🎭 VJ Mode ON' : '🎬 VJ Mode OFF'}
+          </button>
+          
+          {isPerformanceMode && (
+            <div className="audio-level-display">
+              <div className="level-bar">
+                <span>🔊</span>
+                <div className="bar" style={{ width: `${audioData.bass * 100}%`, background: '#ff3366' }}></div>
+              </div>
+              <div className="level-bar">
+                <span>🎸</span>
+                <div className="bar" style={{ width: `${audioData.mid * 100}%`, background: '#33ff88' }}></div>
+              </div>
+              <div className="level-bar">
+                <span>🎹</span>
+                <div className="bar" style={{ width: `${audioData.high * 100}%`, background: '#3366ff' }}></div>
+              </div>
+            </div>
+          )}
+          
           <div className="viewer-info">
             {layers.length} calque{layers.length !== 1 ? 's' : ''}
           </div>
@@ -70,13 +97,29 @@ function Viewer({ layers }) {
         </div>
       </div>
       <div className="canvas-container">
-        <div className="canvas" style={getCanvasStyle()}>
+        <div className={`canvas ${isPerformanceMode ? 'performance-active' : ''}`} style={getCanvasStyle()}>
           {layers.map((layer) => (
             layer.visible && (
-              <Layer 
-                key={layer.id} 
-                layer={layer}
-              />
+              isPerformanceMode ? (
+                <TouchInteraction
+                  key={layer.id}
+                  layer={layer}
+                  audioData={audioData}
+                  onUpdateLayer={onUpdateLayer}
+                  isPerformanceMode={isPerformanceMode}
+                >
+                  <Layer 
+                    layer={layer}
+                    audioData={audioData}
+                  />
+                </TouchInteraction>
+              ) : (
+                <Layer 
+                  key={layer.id} 
+                  layer={layer}
+                  audioData={audioData}
+                />
+              )
             )
           ))}
           {layers.length === 0 && (
@@ -84,6 +127,16 @@ function Viewer({ layers }) {
               <div className="empty-icon">✨</div>
               <p>Votre rêve multimédia apparaîtra ici</p>
               <p className="empty-hint">Ajoutez des calques pour commencer</p>
+            </div>
+          )}
+          
+          {isPerformanceMode && layers.length > 0 && (
+            <div className="performance-hints">
+              <p>🖱️ Glisser pour déplacer</p>
+              <p>🔄 Scroll pour zoomer</p>
+              <p>⇧ Shift+Scroll pour rotation</p>
+              <p>⌃ Ctrl+Scroll pour blur</p>
+              <p>👆 2 doigts: pinch & rotate</p>
             </div>
           )}
         </div>

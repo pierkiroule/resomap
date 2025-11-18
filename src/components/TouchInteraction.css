@@ -1,0 +1,29 @@
+.interactive-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  max-height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.interactive-layer.performance-mode {
+  cursor: grab;
+}
+
+.interactive-layer.performance-mode:active {
+  cursor: grabbing;
+}
+
+.interactive-layer img,
+.interactive-layer video,
+.interactive-layer canvas {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+}

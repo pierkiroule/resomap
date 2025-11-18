@@ -123,6 +123,7 @@ function App() {
           layers={layers}
           audioData={audioData}
           audioAnalyzer={audioAnalyzerRef.current}
+          onUpdateLayer={updateLayer}
         />
       </div>
     </div>
