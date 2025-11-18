@@ -1,6 +1,7 @@
 import React, { useRef } from 'react'
 import LayerPanel from './LayerPanel'
 import AudioReactiveControl from './AudioReactiveControl'
+import PerformanceRecorder from './PerformanceRecorder'
 import './Editor.css'
 
 function Editor({ 
@@ -10,7 +11,8 @@ function Editor({
   onAddLayer, 
   onUpdateLayer, 
   onDeleteLayer,
-  onReorderLayers 
+  onReorderLayers,
+  onRestoreSnapshot 
 }) {
   const fileInputRef = useRef(null)
   const selectedLayer = layers.find(l => l.id === selectedLayerId)
@@ -359,6 +361,11 @@ function Editor({
           </div>
         </div>
       )}
+
+      <PerformanceRecorder 
+        layers={layers}
+        onRestoreSnapshot={onRestoreSnapshot}
+      />
     </div>
   )
 }

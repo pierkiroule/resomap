@@ -92,6 +92,11 @@ function App() {
     ))
   }
 
+  const restoreSnapshot = (snapshotLayers) => {
+    setLayers(snapshotLayers)
+    setSelectedLayerId(null)
+  }
+
   const deleteLayer = (id) => {
     setLayers(layers.filter(layer => layer.id !== id))
     if (selectedLayerId === id) setSelectedLayerId(null)
@@ -118,6 +123,7 @@ function App() {
           onUpdateLayer={updateLayer}
           onDeleteLayer={deleteLayer}
           onReorderLayers={reorderLayers}
+          onRestoreSnapshot={restoreSnapshot}
         />
         <Viewer 
           layers={layers}

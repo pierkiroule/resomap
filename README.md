@@ -116,4 +116,40 @@ resomap/
 - **Gestion d'État Réactive** : Mise à jour instantanée du viewer
 - **Performance Optimisée** : Rendu efficace avec React
 
+## 🎭 Mode Performance VJ
+
+Active le mode révolutionnaire de VJing tactile audio-réactif :
+
+### Gestes Tactiles
+- **Glisser** : Déplacer les calques en temps réel
+- **Scroll** : Zoomer/dézoomer
+- **Shift + Scroll** : Rotation
+- **Ctrl + Scroll** : Contrôle du blur
+- **Pinch (2 doigts)** : Zoom simultané
+- **Rotate (2 doigts)** : Rotation gestuelle
+
+### Audio-Réactivité Live
+- Liaison des paramètres visuels aux fréquences audio
+- Visualisation en temps réel (bass, mid, high)
+- Modulation automatique sync audio
+- Presets audio-réactifs
+
+### Recording & Playback
+- 🎬 Enregistrez vos performances live
+- 📸 Prenez des snapshots de vos scènes
+- ▶️ Rejouez vos performances
+- 💾 Sauvegardez et partagez vos créations
+
+### Prochaines Fonctionnalités
+- Effets de glitch audio-réactifs
+- Transitions automatiques intelligentes
+- Systèmes de particules
+- MIDI/OSC support
+- Export vidéo
+- Mode multi-joueurs
+
+Voir `VISION.md` pour la roadmap complète ! 🚀
+
+---
+
 Créé avec ❤️ pour transformer vos rêves en réalité multimédia !
