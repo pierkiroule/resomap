@@ -1,0 +1,146 @@
+.editor {
+  background: #16213e;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #0f3460;
+  overflow-y: auto;
+}
+
+.editor-toolbar {
+  padding: 1rem;
+  background: #0f3460;
+  border-bottom: 2px solid #533483;
+}
+
+.import-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.import-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.import-btn:active {
+  transform: translateY(0);
+}
+
+.layer-properties {
+  padding: 1rem;
+  color: white;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.layer-properties h3 {
+  margin-bottom: 1rem;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.property-group {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(15, 52, 96, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.property-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.property-group label:last-child {
+  margin-bottom: 0;
+}
+
+.property-group label > span:first-child {
+  font-size: 0.9rem;
+  color: #a8b2d1;
+  font-weight: 500;
+}
+
+.property-group input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: #0f3460;
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.property-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.property-group input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.property-group select {
+  padding: 0.5rem;
+  background: #0f3460;
+  color: white;
+  border: 1px solid #667eea;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.property-group input[type="color"] {
+  width: 100%;
+  height: 40px;
+  border: 2px solid #667eea;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #0f3460;
+}
+
+.value {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.chromakey-section {
+  background: rgba(83, 52, 131, 0.3);
+}
+
+.checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.8rem !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
