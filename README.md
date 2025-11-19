@@ -1,336 +1,432 @@
-# 🌙 Resomap - Professional VJ Suite
+# 🌙 RESOMAP - VJ Artistique Tactile
 
-**Resomap** est un générateur multimédia professionnel pour le **VJing en temps réel**, inspiré de **Resolume** et **Ableton Live**. Créez des compositions visuelles époustouflantes avec audio-réactivité, effects, chromakey, et interaction tactile en direct.
+> **"Au bout du doigt, le rêve en image"**
 
----
-
-## ✨ Features
-
-### 🎨 **Professional Layout (Resolume/Ableton Style)**
-- **Clip Browser** (gauche) : Gérez vos calques avec miniatures et color-coding par type
-- **Composition View** (centre) : Viewer principal avec contrôles fullscreen
-- **Inspector** (droite) : Panneaux organisés en tabs pour édition avancée
-- **Timeline** (bas, optionnel) : Pour automation et playback (coming soon)
-- **Resizable panels** : Ajustez les zones selon vos besoins
-
-### 🎨 **Multi-Layer System**
-- Import de médias hétérogènes : **images, vidéos, GIFs, audio**
-- **Superposition** et **réorganisation** de calques
-- **Color coding** par type (Resolume style) :
-  - 🔴 Vidéo = Rouge
-  - 🔵 Image = Bleu
-  - 🟢 Audio = Vert
-  - 🟠 GIF = Orange
-
-### 🌈 **Advanced Visual Effects**
-- **CSS Filters** : Blur, Brightness, Contrast, Saturate, Hue Rotate, Grayscale, Sepia, Invert
-- **Filter Presets** : Vibrant, Dramatique, N&B, Vintage (shortcuts Q/W/E/R)
-- **Blend Modes** : Normal, Multiply, Screen, Overlay, Color-Dodge, Hard-Light, etc.
-- **Chromakey** : Incrustation fond vert avec contrôles avancés (seuil, smoothness)
-- **Transform controls** : Opacity, Scale, Rotation, Position
-
-### 🎵 **Audio-Reactivity (Resolume-Inspired)**
-- **Web Audio API** : Analyse fréquentielle en temps réel
-- **4 bandes** : Bass, Mid, High, Overall
-- **Mappable parameters** : Chaque effet peut être lié à une fréquence
-- **Intensity & Range** : Min/Max configurable pour chaque paramètre
-- **Real-time visualization** : Barres audio en live
-
-### 🎭 **VJ Performance Mode**
-- **Tactile VJing** : Manipulation directe des calques par touch/mouse
-  - **Drag** : 1 doigt / clic gauche (déplacer)
-  - **Pinch** : 2 doigts (scale)
-  - **Rotate** : 2 doigts (rotation)
-  - **Scroll** : Zoom, Rotate (Shift), Blur (Ctrl)
-- **Audio-reactive gestures** : Les manipulations sont modulées par l'audio en temps réel
-- **Mode fullscreen** : Viewer plein écran (touche `F`)
-- **Performance hints** : Instructions en overlay
-
-### 🎥 **Loop Video Recorder**
-- **Capture 10 secondes** : Enregistrement du flux viewer avec countdown
-- **Ping-Pong Loop** : Lecture forward → reverse automatique
-- **Export formats** : GIF animé, MP4, WebM
-- **Gallery** : Preview et téléchargement des loops enregistrés
-
-### ⌨️ **Keyboard Shortcuts Pro**
-Tous les raccourcis clavier d'un logiciel professionnel ! (Appuyez sur `?` pour afficher)
-
-#### Navigation
-- `Tab` : Cycle entre zones
-- `Cmd/Ctrl + 1-9` : Sélection rapide calque
-- `F` : Fullscreen viewer
-- `Esc` : Exit fullscreen
-
-#### Édition
-- `Delete/Backspace` : Supprimer calque
-- `Cmd/Ctrl + D` : Dupliquer
-- `Cmd/Ctrl + Z/Y` : Undo/Redo
-- `Cmd/Ctrl + S` : Save snapshot
-- `Cmd/Ctrl + R` : Start/Stop recording
-
-#### Performance (Presets & FX)
-- `Q` : Preset Vibrant
-- `W` : Preset Dramatique
-- `E` : Preset N&B
-- `R` : Preset Vintage
-- `A` : Toggle audio-réactivité
-- `C` : Toggle chromakey
-- `V` : Toggle VJ mode
-- `H` : Hide/Show panels
-
-#### Calques
-- `Cmd/Ctrl + ↑/↓` : Réordonner calques
-- `Cmd/Ctrl + [/]` : Cycle blend modes
-- `1-9` : Set opacity 10%-90%
-- `0` : Set opacity 100%
-
-### 🎯 **Inspector avec Tabs**
-Organisation professionnelle des contrôles par catégorie :
-
-1. **🎨 Transform** : Opacity, Scale, Rotation, Position + Presets
-2. **🌈 Effects** : Tous les filtres CSS + Presets visuels
-3. **🎵 Audio** : Configuration audio-réactivité
-4. **🔑 Keying** : Chromakey controls
-5. **⚙️ Advanced** : Blend modes, visibility, layer order
-
-### 📱 **Mobile-Optimized UX**
-- **Responsive design** : Adaptation automatique mobile/tablet/desktop
-- **Touch gestures** : Support complet multi-touch
-- **Collapsible menus** : Panneaux optimisés pour petits écrans
-- **Minimized modes** : Clip browser et inspector en mode icônes
-
-### 📊 **Performance Recording**
-- **Record/Playback** : Capture et rejoue tes performances
-- **Snapshots** : Sauvegarde rapide de l'état des calques
-- **Timeline** : Visualise et édite tes enregistrements (coming soon)
+Une application web révolutionnaire pour le **VJing tactile audioréactif**. Dessine sur l'écran comme un patineur sur glace, et regarde tes vidéos s'animer en temps réel ! 🎨✨
 
 ---
 
-## 🚀 Quick Start
+## 🎯 CONCEPT
+
+**RESOMAP** transforme ton écran en une surface magique où chaque geste devient art visuel.
+
+### L'Expérience
+
+1. **👆 DESSINE** avec ton doigt sur l'écran
+2. **🎨 LES FORMES** que tu crées contrôlent les effets
+3. **🎵 L'AUDIO** booste automatiquement le tout
+4. **✨ LA MAGIE** opère instantanément
+
+Pas de sliders. Pas de réglages précis. **Juste ton doigt et ta créativité.**
+
+---
+
+## ✨ FONCTIONNALITÉS
+
+### 🎨 Drawing Canvas
+- **Multi-touch trails** : Plusieurs doigts = plusieurs traces colorées
+- **Détection de formes** : Circle, Line, Zigzag, Spiral automatiquement détectés
+- **Trails animés** : Glow audio-réactif, fade progressif, couleurs uniques
+- **Système de particules** : Points lumineux le long des trajectoires
+
+### 🎭 6 Modes Prédéfinis
+
+#### 🌈 **PSYCHÉDÉLIQUE**
+Couleurs explosives, rotations rapides, effets psychédéliques intenses
+
+#### ⚡ **GLITCH**
+Effets numériques chaotiques, displacement, RGB split, digital noise
+
+#### 🌊 **SMOOTH**
+Transitions fluides et douces, blur artistique, mouvements lents
+
+#### 💥 **STROBE**
+Flash et contraste intense, effets de lumière stroboscopique
+
+#### 🌀 **VORTEX**
+Spirales et distorsions, effet tourbillon, radial blur
+
+#### 🎨 **PAINTING**
+Effet aquarelle et artistique, brush strokes, color bleeding
+
+### 🎵 Audio-Réactivité Automatique
+
+L'audio contrôle **automatiquement** tous les effets :
+
+- **Bass** : Glow, scale, displacement
+- **Mid** : Hue rotation, color shift
+- **High** : Brightness, sparkle, saturation
+
+### 🎬 Support Multi-Média
+
+- **Images** : JPG, PNG, GIF
+- **Vidéos** : MP4, WebM, MOV
+- **Audio** : MP3, WAV, OGG
+
+---
+
+## 🚀 QUICK START
 
 ### Installation
 
 ```bash
 npm install
+```
+
+### Lancement
+
+```bash
 npm run dev
 ```
 
-Ouvre ton navigateur à `http://localhost:5173`
+Ouvre [http://localhost:5173](http://localhost:5173) dans ton navigateur.
 
 ### Build Production
 
 ```bash
 npm run build
-npm run preview
 ```
 
 ---
 
-## 🎨 Usage
+## 🎮 COMMENT UTILISER
 
-### 1. **Import Media**
-- Clique sur **"+ Import Media"** dans le header
-- Sélectionne images, vidéos, GIFs, ou audio
-- Tes clips apparaissent dans le **Clip Browser** (gauche)
+### 1. Importe tes médias
 
-### 2. **Edit Properties**
-- Sélectionne un clip dans le Clip Browser
-- Édite ses propriétés dans l'**Inspector** (droite)
-- Utilise les **tabs** pour accéder aux différentes catégories d'effets
+Clique sur **"➕ Ajouter Média"** et sélectionne tes vidéos/images/audio.
 
-### 3. **Audio-Reactivity**
-- Active un calque audio pour initialiser l'analyse
-- Dans l'Inspector → Tab **Audio**, configure les paramètres
-- Toggle audio-réactivité sur n'importe quel paramètre (Opacity, Scale, Rotation, etc.)
+### 2. Choisis un mode
 
-### 4. **VJ Performance**
-- Active le mode performance (touche `V` ou bouton dans viewer)
-- **Manipule directement** les calques avec la souris ou le touch
-- Les effets audio-réactifs s'appliquent en temps réel
+Sélectionne un des **6 modes** dans le panneau en haut à gauche :
+- 🌈 Psychédélique
+- ⚡ Glitch
+- 🌊 Smooth
+- 💥 Strobe
+- 🌀 Vortex
+- 🎨 Painting
 
-### 5. **Record Loops**
-- Active le **Loop Recorder** dans le viewer
-- Clique **"Start Capture"** (countdown 3s)
-- Après 10s, ton loop ping-pong est créé
-- Export en GIF ou MP4
+### 3. Dessine !
 
-### 6. **Keyboard Shortcuts**
-- Appuie sur **`?`** pour afficher tous les raccourcis
-- Utilise `Q/W/E/R` pour appliquer des presets rapidement
-- `Cmd/Ctrl + 1-9` pour sélectionner un calque
-- `F` pour fullscreen, `Esc` pour sortir
+**👆 Utilise ton doigt** (ou ta souris) pour dessiner sur l'écran.
+
+**Les formes créent des effets :**
+- **Cercle** → Rotation, hue shift
+- **Ligne droite** → Translation, blur
+- **Zigzag** → Glitch, chaos
+- **Spirale** → Vortex, twist
+
+### 4. Laisse l'audio guider
+
+Si tu as importé un fichier audio, les effets s'intensifient automatiquement avec le son ! 🎵
 
 ---
 
-## 🎯 Design Philosophy
+## 🎨 MAPPING DES EFFETS
 
-Resomap est conçu avec les principes UX de **Resolume** et **Ableton Live** :
+### Formes → Effets
 
-✅ **Everything in 3 clicks max**
-✅ **Visual feedback immédiat** (< 100ms)
-✅ **Contextual help** (tooltips avec shortcuts)
-✅ **Undo everything** (historique infini, coming soon)
-✅ **Professional workflow** (zones dédiées, tabs, shortcuts)
+| Forme | Effets générés |
+|-------|----------------|
+| **Circle** | Rotation continue, hue cycling, scale pulse |
+| **Line** | Translation, blur motion, brightness boost |
+| **Zigzag** | Glitch intense, displacement chaos, flicker |
+| **Spiral** | Vortex distortion, radial blur, twist |
+| **Curve** | Smooth transitions, color flow, soft blur |
 
-Voir [DESIGN_PHILOSOPHY.md](./DESIGN_PHILOSOPHY.md) pour plus de détails.
+### Audio → Intensité
+
+| Fréquence | Impact |
+|-----------|--------|
+| **Bass** (0-250Hz) | Glow size, scale, displacement, blur |
+| **Mid** (250-2000Hz) | Hue rotation, color shift, rotation speed |
+| **High** (2000-20000Hz) | Brightness, saturation, sparkle, contrast |
 
 ---
 
-## 📦 Tech Stack
+## 🎭 MODES DÉTAILLÉS
 
-- **React 18** : Framework UI
+### 🌈 Mode PSYCHÉDÉLIQUE
+
+**Idéal pour :** Ambiances psychédéliques, festivals, expériences immersives
+
+**Effets :**
+- Hue rotation rapide basée sur position X
+- Scale pulse audio-réactif (bass)
+- Brightness boost (vélocité + high)
+- Saturation maximale
+- Blur oscillant
+
+**Formes spéciales :**
+- Circle → Rotation continue
+- Spiral → Rotation 2x + scale 1.4x
+
+---
+
+### ⚡ Mode GLITCH
+
+**Idéal pour :** Techno, effets digitaux, cyberpunk
+
+**Effets :**
+- Displacement aléatoire (bass)
+- Contrast boost (mid)
+- RGB split simulation
+- Hue rotation chaotique (zigzag)
+- Invert aléatoire
+
+**Formes spéciales :**
+- Zigzag → Hue aléatoire + invert possible
+
+---
+
+### 🌊 Mode SMOOTH
+
+**Idéal pour :** Ambient, chill, transitions douces
+
+**Effets :**
+- Blur important (vélocité + bass)
+- Opacity 0.9
+- Brightness subtil (high)
+- Hue rotation douce (position X + mid)
+- Scale léger (bass)
+
+**Style :** Fluide, apaisant, artistique
+
+---
+
+### 💥 Mode STROBE
+
+**Idéal pour :** Drops, climax, energy peaks
+
+**Effets :**
+- Flash activé si bass > 0.6 ou vélocité > 0.7
+- Brightness 200% (flash) / 80% (normal)
+- Contrast 200% (flash) / 100% (normal)
+- Invert aléatoire durant flash
+
+**Attention :** Effets intenses !
+
+---
+
+### 🌀 Mode VORTEX
+
+**Idéal pour :** Effets hypnotiques, transitions complexes
+
+**Effets :**
+- Rotation continue
+- Scale oscillant (intensité vélocité + bass)
+- Blur audio-réactif (mid)
+- Scale X/Y différentiels (distorsion radiale)
+
+**Formes spéciales :**
+- Spiral → Rotation 2x + scale 1.4x
+
+---
+
+### 🎨 Mode PAINTING
+
+**Idéal pour :** Art visuel, organic, watercolor
+
+**Effets :**
+- Blur artistique (vélocité)
+- Saturation boost (mid)
+- Brightness subtil (high)
+- Hue rotation position X
+- Opacity 0.95
+
+**Formes spéciales :**
+- Circle/Spiral → Blur +2
+
+---
+
+## 📱 MOBILE FIRST
+
+**RESOMAP** est optimisé pour les **appareils tactiles** :
+
+✅ Multi-touch natif
+✅ Responsive design
+✅ Gestures optimisés
+✅ Performance 60fps
+
+**Fonctionne sur :**
+- 📱 Smartphones (iOS, Android)
+- 🖥️ Tablettes
+- 💻 Desktop (avec souris)
+
+---
+
+## 🛠️ ARCHITECTURE TECHNIQUE
+
+### Stack
+
+- **React 18** : UI framework
 - **Vite** : Build tool ultra-rapide
+- **Canvas API** : Rendering des trails
 - **Web Audio API** : Analyse audio temps réel
-- **Canvas API** : Chromakey & frame processing
-- **MediaRecorder API** : Capture vidéo
-- **CSS3** : Filters, blend modes, animations
-- **HTML5 Media** : Lecture vidéo/audio optimisée
+- **CSS3** : Filters & transforms hardware-accelerated
 
----
-
-## 🎪 Architecture
+### Components
 
 ```
-src/
-├── App.jsx                        # Main app avec ProLayout
-├── components/
-│   ├── ProLayout.jsx              # Layout Resolume-style avec zones
-│   ├── ClipBrowser.jsx            # Liste des calques avec color-coding
-│   ├── TabsInspector.jsx          # Inspector avec tabs
-│   ├── Viewer.jsx                 # Composition view
-│   ├── Layer.jsx                  # Rendu d'un calque
-│   ├── ShortcutsHelp.jsx          # Aide keyboard shortcuts
-│   ├── AudioReactiveControl.jsx   # UI audio-réactivité
-│   ├── TouchInteraction.jsx       # Gestures tactiles VJ mode
-│   ├── VideoCapture.jsx           # Loop recorder
-│   ├── PerformanceRecorder.jsx    # Recording performances
-│   ├── FloatingPanel.jsx          # Panneaux draggables
-│   └── MobileMenu.jsx             # Menus mobiles collapsibles
-├── hooks/
-│   └── useKeyboardShortcuts.js    # Hook pour shortcuts clavier
-└── utils/
-    ├── AudioAnalyzer.js           # Web Audio API wrapper
-    └── GifEncoder.js              # Export GIF animé
+App.jsx
+└── ArtisticVJ.jsx
+    ├── DrawingCanvas.jsx (trails + shapes detection)
+    ├── ModeSelector.jsx (6 modes buttons)
+    └── Layer rendering (video/image/audio)
+
+Utils
+├── AudioAnalyzer.js (frequency analysis)
+└── effectModes.js (modes config + effects calculation)
+```
+
+### Performance
+
+- **60fps** rendering via `requestAnimationFrame`
+- **Hardware acceleration** pour filters CSS
+- **Throttled updates** pour éviter surcharge
+- **Canvas optimization** (devicePixelRatio)
+
+---
+
+## 🎯 EXEMPLES D'USAGE
+
+### Session VJ Live
+
+```
+1. Prépare 3-4 vidéos en avance
+2. Import audio track (musique live)
+3. Start mode 🌊 Smooth (intro)
+4. Build up avec 🌈 Psychédélique
+5. Drop avec ⚡ Glitch ou 💥 Strobe
+6. Break avec 🌀 Vortex
+7. Outro avec 🎨 Painting
+```
+
+### Performance Freestyle
+
+```
+1. Import médias variés
+2. Laisse l'audio jouer
+3. Ferme les yeux
+4. Sens le rythme
+5. Dessine librement
+6. Magie ! ✨
+```
+
+### Installation Artistique
+
+```
+1. Setup grand écran tactile
+2. Loop vidéos ambient
+3. Mode 🎨 Painting ou 🌊 Smooth
+4. Laisse le public interagir
+5. Chaque session unique !
 ```
 
 ---
 
-## 🛠️ Roadmap
+## 🎨 TIPS & ASTUCES
 
-### Phase 1 ✅ (Current)
-- ✅ Architecture Pro Layout (Resolume/Ableton style)
-- ✅ Clip Browser avec color-coding
-- ✅ Inspector avec tabs
-- ✅ Keyboard shortcuts pro
-- ✅ Audio-réactivité avancée
-- ✅ VJ performance mode
-- ✅ Loop video recorder
-- ✅ Mobile UX optimization
+### Pour des effets intenses
+- Utilise mode **⚡ Glitch** ou **💥 Strobe**
+- Dessine rapidement (haute vélocité)
+- Multiplie les trails (plusieurs doigts)
 
-### Phase 2 🔄 (Next)
-- ⏱️ Timeline avec automation curves
-- 🔄 Undo/Redo system (Cmd+Z/Y)
-- 💾 Save/Load projects
-- 🎨 Presets marketplace
-- 📚 Templates library
-- 🎬 Multi-scene management
+### Pour des effets doux
+- Utilise mode **🌊 Smooth** ou **🎨 Painting**
+- Dessine lentement
+- Formes circulaires et courbes
 
-### Phase 3 🚀 (Future)
-- 🎹 MIDI mapping
-- 🔌 OSC protocol
-- 📡 NDI streaming
-- 🤖 AI-powered effects
-- 👥 Collaboration en temps réel
-- ☁️ Cloud sync
+### Pour synchroniser avec l'audio
+- Les effets sont **automatiquement** audio-réactifs !
+- Le bass contrôle l'intensité
+- Les highs ajoutent du sparkle
 
-Voir [VISION.md](./VISION.md) pour la vision complète.
+### Pour créer des patterns
+- Dessine des formes répétitives
+- Alterne entre différentes formes
+- Combine plusieurs doigts
 
 ---
 
-## 🎨 Color System
+## 🚧 ROADMAP
 
-### Brand Colors
-- **Primary** : `#667eea` (Violet)
-- **Secondary** : `#764ba2` (Purple)
-- **Accent** : `#00ff88` (Green)
-- **Warning** : `#ff3366` (Red)
-- **Info** : `#3366ff` (Blue)
+### Version 2.0 (Prochainement)
 
-### Media Type Colors (Resolume style)
-- **Vidéo** : `#ff3366` (Rouge)
-- **Image** : `#3366ff` (Bleu)
-- **Audio** : `#00ff88` (Vert)
-- **GIF** : `#ffaa00` (Orange)
+- [ ] **Recording** : Capturer les performances en vidéo
+- [ ] **Presets** : Sauvegarder tes configurations
+- [ ] **MIDI support** : Contrôle via hardware
+- [ ] **Webcam input** : Utilise ta caméra comme source
+- [ ] **3D effects** : WebGL pour effets avancés
+- [ ] **Collaborative** : Session VJ multi-utilisateurs
+
+### Version 2.1
+
+- [ ] **AI shape recognition** : Détection avancée
+- [ ] **Beat detection** : Sync parfait avec BPM
+- [ ] **OSC support** : Intégration Resolume/TouchDesigner
+- [ ] **Shader editor** : Crée tes propres effets
 
 ---
 
-## 🤝 Contributing
+## 🤝 CONTRIBUTION
 
-Les contributions sont les bienvenues ! Pour contribuer :
+Les contributions sont les bienvenues ! 🎉
+
+### Comment contribuer
 
 1. Fork le projet
-2. Crée une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tes changements (`git commit -m 'Add AmazingFeature'`)
-4. Push sur la branche (`git push origin feature/AmazingFeature`)
+2. Crée une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit tes changes (`git commit -m 'Add AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
 5. Ouvre une Pull Request
 
 ---
 
-## 📄 License
+## 📄 LICENSE
 
-MIT License - Fais ce que tu veux avec ce code ! 🎉
-
----
-
-## 🙏 Credits
-
-Inspiré par les meilleurs outils de VJing et production :
-- **Resolume Avenue/Arena** : Layout & workflow pro
-- **Ableton Live** : Inspector & shortcuts
-- **TouchDesigner** : Node-based approach (future)
-- **VDMX** : Real-time VJ performance
+MIT License - Utilise librement, crée, partage ! ❤️
 
 ---
 
-## 📬 Contact
+## 🙏 CREDITS
 
-Créé avec ❤️ pour la communauté VJ
+### Inspiration
 
-**"Professional tools for creative minds"** 🎭✨
+- **Resolume** : VJ software professionnel
+- **TouchDesigner** : Générateur visuel temps réel
+- **Ableton Live** : Workflow intuitif
+- **Light painting** : Traces lumineuses artistiques
 
----
+### Technologies
 
-## 🎯 Keyboard Shortcuts Quick Reference
-
-| Action | Shortcut | Description |
-|--------|----------|-------------|
-| **NAVIGATION** |
-| Sélection rapide | `Cmd/Ctrl + 1-9` | Sélectionne le calque N |
-| Fullscreen | `F` | Mode plein écran viewer |
-| Exit fullscreen | `Esc` | Sortir du fullscreen |
-| **ÉDITION** |
-| Supprimer | `Delete` | Supprimer calque sélectionné |
-| Dupliquer | `Cmd/Ctrl + D` | Dupliquer le calque |
-| Undo | `Cmd/Ctrl + Z` | Annuler |
-| Redo | `Cmd/Ctrl + Y` | Refaire |
-| **PERFORMANCE** |
-| Preset Vibrant | `Q` | Appliquer preset Vibrant |
-| Preset Dramatique | `W` | Appliquer preset Dramatique |
-| Preset N&B | `E` | Appliquer preset N&B |
-| Preset Vintage | `R` | Appliquer preset Vintage |
-| Toggle Chromakey | `C` | Activer/désactiver chromakey |
-| **CALQUES** |
-| Monter calque | `Cmd/Ctrl + ↑` | Monter dans la pile |
-| Descendre calque | `Cmd/Ctrl + ↓` | Descendre dans la pile |
-| Cycle blend mode | `Cmd/Ctrl + [/]` | Changer blend mode |
-| Set opacity | `1-9, 0` | Opacité 10%-100% |
-| **AIDE** |
-| Shortcuts help | `?` | Afficher tous les raccourcis |
+- React Team
+- Vite Team
+- Web Audio API
+- Canvas API
 
 ---
 
-**Ready to create visual magic?** 🌙✨
+## 💬 CONTACT & SUPPORT
 
-```bash
-npm run dev
-```
+**Questions ?** Ouvre une issue sur GitHub
+
+**Showcase ?** Tag #RESOMAP sur les réseaux !
+
+**Pro support ?** Contact via GitHub
+
+---
+
+## 🎨 PHILOSOPHIE
+
+> RESOMAP croit que **la création visuelle doit être accessible à tous**.
+> 
+> Pas besoin d'être expert. Pas de courbe d'apprentissage.
+> Juste toi, ton doigt, et ta créativité.
+> 
+> **L'art au bout des doigts.** 🌙✨
+
+---
+
+**Développé avec ❤️ pour la communauté VJ** 🎭
+
+**"Au bout du doigt, le rêve en image"** 🌙

@@ -1,22 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
-import SimpleClipList from './components/SimpleClipList'
-import Viewer from './components/Viewer'
+import ArtisticVJ from './components/ArtisticVJ'
 import AudioAnalyzer from './utils/AudioAnalyzer'
 import './App.css'
 
 function App() {
   const [layers, setLayers] = useState([])
-  const [selectedLayerId, setSelectedLayerId] = useState(null)
   const [audioData, setAudioData] = useState({ bass: 0, mid: 0, high: 0, overall: 0 })
   const audioAnalyzerRef = useRef(null)
   const animationFrameRef = useRef(null)
   const fileInputRef = useRef(null)
 
+  // Setup audio analyzer
   useEffect(() => {
-    // Initialize audio analyzer
     audioAnalyzerRef.current = new AudioAnalyzer()
     
-    // Animation loop for audio analysis
     const updateAudioData = () => {
       if (audioAnalyzerRef.current) {
         const data = audioAnalyzerRef.current.getFrequencyData()
@@ -26,104 +23,101 @@ function App() {
     }
     
     updateAudioData()
-
+    
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
       if (audioAnalyzerRef.current) {
-        audioAnalyzerRef.current.destroy()
+        audioAnalyzerRef.current.disconnect()
       }
     }
   }, [])
 
+  // Ajouter un layer
   const addLayer = (file) => {
+    const type = getFileType(file)
+    const url = URL.createObjectURL(file)
+    
     const newLayer = {
-      id: Date.now(),
+      id: Date.now() + Math.random(),
       name: file.name,
-      type: getFileType(file),
-      src: URL.createObjectURL(file),
-      file: file,
+      type,
+      src: url,
       visible: true,
       opacity: 1,
       blendMode: 'normal',
-      chromaKey: {
-        enabled: false,
-        color: '#00ff00',
-        threshold: 0.4,
-        smoothness: 0.1
-      },
       filters: {
-        blur: 0,
+        hueRotate: 0,
+        saturate: 100,
         brightness: 100,
         contrast: 100,
-        saturate: 100,
-        hueRotate: 0,
-        grayscale: 0,
-        sepia: 0,
+        blur: 0,
         invert: 0
       },
-      audioReactive: {
-        opacity: { enabled: false, source: 'overall', min: 0, max: 1, intensity: 1 },
-        scale: { enabled: false, source: 'bass', min: 0.8, max: 1.5, intensity: 1 },
-        rotation: { enabled: false, source: 'mid', min: 0, max: 360, intensity: 1 },
-        blur: { enabled: false, source: 'high', min: 0, max: 10, intensity: 1 },
-        brightness: { enabled: false, source: 'overall', min: 80, max: 150, intensity: 1 },
-        hueRotate: { enabled: false, source: 'overall', min: 0, max: 360, intensity: 1 }
-      },
-      position: { x: 0, y: 0 },
-      scale: 1,
-      rotation: 0
+      transform: {
+        scale: 1,
+        rotation: 0,
+        translateX: 0,
+        translateY: 0
+      }
     }
-    setLayers([...layers, newLayer])
-    setSelectedLayerId(newLayer.id)
+    
+    setLayers(prev => [...prev, newLayer])
+    
+    // Si c'est un audio, le connecter à l'analyzer
+    if (type === 'audio' && audioAnalyzerRef.current) {
+      const audio = new Audio(url)
+      audio.loop = true
+      audio.play()
+      audioAnalyzerRef.current.connectAudio(audio)
+    }
   }
 
+  // Détecter le type de fichier
+  const getFileType = (file) => {
+    const type = file.type
+    if (type.startsWith('image/gif')) return 'gif'
+    if (type.startsWith('image/')) return 'image'
+    if (type.startsWith('video/')) return 'video'
+    if (type.startsWith('audio/')) return 'audio'
+    return 'unknown'
+  }
+
+  // Mettre à jour un layer
+  const updateLayer = (layerId, updates) => {
+    setLayers(prev => 
+      prev.map(layer => 
+        layer.id === layerId 
+          ? { ...layer, ...updates }
+          : layer
+      )
+    )
+  }
+
+  // Supprimer un layer
+  const deleteLayer = (layerId) => {
+    const layer = layers.find(l => l.id === layerId)
+    if (layer?.src) {
+      URL.revokeObjectURL(layer.src)
+    }
+    setLayers(prev => prev.filter(l => l.id !== layerId))
+  }
+
+  // Import de fichiers
   const handleFileImport = () => {
     fileInputRef.current?.click()
   }
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files || [])
-    files.forEach(file => addLayer(file))
+    files.forEach(addLayer)
+    e.target.value = '' // Reset input
   }
-
-  const getFileType = (file) => {
-    const type = file.type
-    if (type.startsWith('image/')) return 'image'
-    if (type.startsWith('video/')) return 'video'
-    if (type.startsWith('audio/')) return 'audio'
-    if (type === 'image/gif') return 'gif'
-    return 'unknown'
-  }
-
-  const updateLayer = (id, updates) => {
-    setLayers(layers.map(layer => 
-      layer.id === id ? { ...layer, ...updates } : layer
-    ))
-  }
-
-  const restoreSnapshot = (snapshotLayers) => {
-    setLayers(snapshotLayers)
-    setSelectedLayerId(null)
-  }
-
-  const deleteLayer = (id) => {
-    setLayers(layers.filter(layer => layer.id !== id))
-    if (selectedLayerId === id) setSelectedLayerId(null)
-  }
-
-  const reorderLayers = (startIndex, endIndex) => {
-    const result = Array.from(layers)
-    const [removed] = result.splice(startIndex, 1)
-    result.splice(endIndex, 0, removed)
-    setLayers(result)
-  }
-
-  const selectedLayer = layers.find(l => l.id === selectedLayerId)
 
   return (
-    <div className="app">
+    <div className="app artistic-mode">
+      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -133,34 +127,74 @@ function App() {
         onChange={handleFileChange}
       />
 
-      {/* Simple Header */}
-      <header className="simple-header">
-        <h1>🌙 RESOMAP</h1>
-        <button className="import-btn" onClick={handleFileImport}>
-          + Ajouter Média
-        </button>
+      {/* Simple header */}
+      <header className="artistic-header">
+        <h1 className="artistic-title">
+          <span className="title-icon">🌙</span>
+          <span className="title-text">RESOMAP</span>
+          <span className="title-tagline">VJ Artistique</span>
+        </h1>
+        
+        <div className="header-actions">
+          <button className="import-btn" onClick={handleFileImport}>
+            <span className="btn-icon">➕</span>
+            <span className="btn-text">Ajouter Média</span>
+          </button>
+          
+          {layers.length > 0 && (
+            <div className="layers-count">
+              {layers.length} layer{layers.length > 1 ? 's' : ''}
+            </div>
+          )}
+        </div>
       </header>
 
-      {/* Main Layout */}
-      <div className="simple-layout">
-        {/* Left: Clip List */}
-        <SimpleClipList
-          layers={layers}
-          selectedLayer={selectedLayer}
-          onSelectLayer={(layer) => setSelectedLayerId(layer.id)}
-          onUpdateLayer={updateLayer}
-          onDeleteLayer={deleteLayer}
-        />
-
-        {/* Right: Viewer */}
-        <Viewer
+      {/* Main ArtisticVJ */}
+      <main className="artistic-main">
+        <ArtisticVJ
           layers={layers}
           audioData={audioData}
-          audioAnalyzer={audioAnalyzerRef.current}
           onUpdateLayer={updateLayer}
-          selectedLayer={selectedLayer}
         />
-      </div>
+      </main>
+
+      {/* Quick layers list - collapsible */}
+      {layers.length > 0 && (
+        <div className="quick-layers">
+          <details>
+            <summary>
+              📋 Layers ({layers.length})
+            </summary>
+            <div className="quick-layers-list">
+              {layers.map(layer => (
+                <div key={layer.id} className="quick-layer-item">
+                  <span className="layer-icon">
+                    {layer.type === 'video' && '🎬'}
+                    {layer.type === 'image' && '🖼️'}
+                    {layer.type === 'gif' && '✨'}
+                    {layer.type === 'audio' && '🎵'}
+                  </span>
+                  <span className="layer-name">{layer.name}</span>
+                  <button
+                    className="layer-visibility"
+                    onClick={() => updateLayer(layer.id, { visible: !layer.visible })}
+                    title={layer.visible ? 'Masquer' : 'Afficher'}
+                  >
+                    {layer.visible ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                  <button
+                    className="layer-delete"
+                    onClick={() => deleteLayer(layer.id)}
+                    title="Supprimer"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              ))}
+            </div>
+          </details>
+        </div>
+      )}
     </div>
   )
 }
