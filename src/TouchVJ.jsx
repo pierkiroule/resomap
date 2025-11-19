@@ -22,6 +22,47 @@ export default function TouchVJ() {
   const [audioData, setAudioData] = useState({ bass: 0.5, mid: 0.5, high: 0.5 })
   const [manipulateMode, setManipulateMode] = useState(false) // Toggle between draw/manipulate
   
+  // Recording
+  const mediaRecorderRef = useRef(null)
+  const recordedChunksRef = useRef([])
+  const [isRecording, setIsRecording] = useState(false)
+  const [recordingTime, setRecordingTime] = useState(0)
+  const recordingTimerRef = useRef(null)
+  
+  // UI visibility
+  const [uiVisible, setUiVisible] = useState(true)
+  const uiTimeoutRef = useRef(null)
+  
+  // XY Pad FX
+  const [xyPadActive, setXyPadActive] = useState(false)
+  const [xyPadFX, setXyPadFX] = useState({
+    x: 0.5, // 0-1
+    y: 0.5, // 0-1
+    xEffect: 'hue', // hue, blur, brightness, contrast, saturate
+    yEffect: 'blur' // hue, blur, brightness, contrast, saturate
+  })
+  
+  // Auto-hide UI
+  useEffect(() => {
+    const resetUITimer = () => {
+      setUiVisible(true)
+      clearTimeout(uiTimeoutRef.current)
+      uiTimeoutRef.current = setTimeout(() => {
+        if (!isRecording) setUiVisible(false)
+      }, 3000)
+    }
+    
+    window.addEventListener('mousemove', resetUITimer)
+    window.addEventListener('touchstart', resetUITimer)
+    resetUITimer()
+    
+    return () => {
+      window.removeEventListener('mousemove', resetUITimer)
+      window.removeEventListener('touchstart', resetUITimer)
+      clearTimeout(uiTimeoutRef.current)
+    }
+  }, [isRecording])
+  
   // Initialize canvas and audio
   useEffect(() => {
     const canvas = canvasRef.current
@@ -309,6 +350,109 @@ export default function TouchVJ() {
     particlesRef.current = []
   }
   
+  // Recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { mediaSource: 'screen' }
+      })
+      
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm;codecs=vp9',
+        videoBitsPerSecond: 5000000
+      })
+      
+      recordedChunksRef.current = []
+      
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          recordedChunksRef.current.push(e.data)
+        }
+      }
+      
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `resomap-vj-${Date.now()}.webm`
+        a.click()
+        URL.revokeObjectURL(url)
+        
+        stream.getTracks().forEach(track => track.stop())
+      }
+      
+      mediaRecorder.start()
+      mediaRecorderRef.current = mediaRecorder
+      setIsRecording(true)
+      setRecordingTime(0)
+      
+      // Timer
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime(prev => {
+          if (prev >= 30) {
+            stopRecording()
+            return 30
+          }
+          return prev + 1
+        })
+      }, 1000)
+      
+      // Auto-stop after 30 seconds
+      setTimeout(() => {
+        if (mediaRecorderRef.current?.state === 'recording') {
+          stopRecording()
+        }
+      }, 30000)
+      
+    } catch (err) {
+      console.error('Recording error:', err)
+      alert('Erreur d\'enregistrement. Assurez-vous de sélectionner l\'onglet à enregistrer.')
+    }
+  }
+  
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop()
+      clearInterval(recordingTimerRef.current)
+      setIsRecording(false)
+      setRecordingTime(0)
+    }
+  }
+  
+  // XY Pad handler
+  const handleXYPad = (e) => {
+    if (!xyPadActive) return
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX || e.touches[0].clientX) - rect.left) / rect.width
+    const y = 1 - ((e.clientY || e.touches[0].clientY) - rect.top) / rect.height
+    
+    setXyPadFX(prev => ({
+      ...prev,
+      x: Math.max(0, Math.min(1, x)),
+      y: Math.max(0, Math.min(1, y))
+    }))
+  }
+  
+  // Get FX value from XY pad
+  const getFXValue = (effect, value) => {
+    switch(effect) {
+      case 'hue':
+        return value * 360 // 0-360deg
+      case 'blur':
+        return value * 20 // 0-20px
+      case 'brightness':
+        return 50 + value * 100 // 50-150%
+      case 'contrast':
+        return 50 + value * 100 // 50-150%
+      case 'saturate':
+        return value * 200 // 0-200%
+      default:
+        return value
+    }
+  }
+  
   return (
     <div className="touch-vj">
       {/* Video Layers */}
@@ -316,6 +460,20 @@ export default function TouchVJ() {
         {videoLayers.map(layer => {
           const audioScale = layer.audioReactive.scale ? (1 + audioData.bass * 0.5) : 1
           const audioOpacity = layer.audioReactive.opacity ? audioData.high : layer.opacity
+          
+          // XY Pad FX
+          const hue = xyPadActive ? getFXValue(xyPadFX.xEffect === 'hue' ? 'hue' : xyPadFX.yEffect === 'hue' ? 'hue' : null, 
+                                                xyPadFX.xEffect === 'hue' ? xyPadFX.x : xyPadFX.yEffect === 'hue' ? xyPadFX.y : 0) : 0
+          const blur = xyPadActive ? getFXValue(xyPadFX.xEffect === 'blur' ? 'blur' : xyPadFX.yEffect === 'blur' ? 'blur' : null,
+                                                xyPadFX.xEffect === 'blur' ? xyPadFX.x : xyPadFX.yEffect === 'blur' ? xyPadFX.y : 0) : 0
+          const brightness = xyPadActive ? getFXValue(xyPadFX.xEffect === 'brightness' ? 'brightness' : xyPadFX.yEffect === 'brightness' ? 'brightness' : null,
+                                                       xyPadFX.xEffect === 'brightness' ? xyPadFX.x : xyPadFX.yEffect === 'brightness' ? xyPadFX.y : 0.5) : 100
+          const contrast = xyPadActive ? getFXValue(xyPadFX.xEffect === 'contrast' ? 'contrast' : xyPadFX.yEffect === 'contrast' ? 'contrast' : null,
+                                                     xyPadFX.xEffect === 'contrast' ? xyPadFX.x : xyPadFX.yEffect === 'contrast' ? xyPadFX.y : 0.5) : 100
+          const saturate = xyPadActive ? getFXValue(xyPadFX.xEffect === 'saturate' ? 'saturate' : xyPadFX.yEffect === 'saturate' ? 'saturate' : null,
+                                                     xyPadFX.xEffect === 'saturate' ? xyPadFX.x : xyPadFX.yEffect === 'saturate' ? xyPadFX.y : 0.5) : 100
+          
+          const filterString = `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg)`
           
           return (
             <video
@@ -331,7 +489,8 @@ export default function TouchVJ() {
                 top: layer.y + 'px',
                 transform: `translate(-50%, -50%) scale(${layer.scale * audioScale})`,
                 opacity: audioOpacity,
-                mixBlendMode: layer.blendMode
+                mixBlendMode: layer.blendMode,
+                filter: filterString
               }}
               onLoadedData={(e) => e.target.play()}
             />
@@ -350,7 +509,7 @@ export default function TouchVJ() {
       />
       
       {/* Top UI */}
-      <div className="ui">
+      <div className={`ui ${uiVisible ? 'visible' : 'hidden'}`}>
         <input
           type="file"
           id="audio-upload"
@@ -375,11 +534,27 @@ export default function TouchVJ() {
         </label>
         
         <button 
+          className={isRecording ? 'recording' : ''}
+          onClick={isRecording ? stopRecording : startRecording}
+          title={isRecording ? 'Stop Recording' : 'Record 30sec'}
+        >
+          {isRecording ? '⏹️' : '⏺️'}
+        </button>
+        
+        <button 
           className={manipulateMode ? 'active' : ''}
           onClick={() => setManipulateMode(!manipulateMode)}
           title="Toggle Manipulate/Draw"
         >
           {manipulateMode ? '🖐️' : '✏️'}
+        </button>
+        
+        <button 
+          className={xyPadActive ? 'active' : ''}
+          onClick={() => setXyPadActive(!xyPadActive)}
+          title="XY Pad FX Controller"
+        >
+          🎛️
         </button>
         
         <div className="separator" />
@@ -417,9 +592,62 @@ export default function TouchVJ() {
         <button className="clear" onClick={clear}>🗑️</button>
       </div>
       
+      {/* Recording Timer */}
+      {isRecording && (
+        <div className="recording-timer">
+          <div className="rec-dot" />
+          <span>REC {recordingTime}s / 30s</span>
+        </div>
+      )}
+      
+      {/* XY Pad Controller */}
+      {xyPadActive && (
+        <div className={`xy-pad-container ${uiVisible ? 'visible' : 'hidden'}`}>
+          <div className="xy-pad-header">
+            <select 
+              value={xyPadFX.xEffect}
+              onChange={(e) => setXyPadFX(prev => ({ ...prev, xEffect: e.target.value }))}
+            >
+              <option value="hue">Hue</option>
+              <option value="blur">Blur</option>
+              <option value="brightness">Brightness</option>
+              <option value="contrast">Contrast</option>
+              <option value="saturate">Saturate</option>
+            </select>
+            <span>X</span>
+            <span>Y</span>
+            <select 
+              value={xyPadFX.yEffect}
+              onChange={(e) => setXyPadFX(prev => ({ ...prev, yEffect: e.target.value }))}
+            >
+              <option value="blur">Blur</option>
+              <option value="hue">Hue</option>
+              <option value="brightness">Brightness</option>
+              <option value="contrast">Contrast</option>
+              <option value="saturate">Saturate</option>
+            </select>
+          </div>
+          <div 
+            className="xy-pad"
+            onMouseDown={handleXYPad}
+            onMouseMove={(e) => e.buttons === 1 && handleXYPad(e)}
+            onTouchStart={handleXYPad}
+            onTouchMove={handleXYPad}
+          >
+            <div 
+              className="xy-pad-cursor"
+              style={{
+                left: `${xyPadFX.x * 100}%`,
+                top: `${(1 - xyPadFX.y) * 100}%`
+              }}
+            />
+          </div>
+        </div>
+      )}
+      
       {/* Layer Controls */}
       {selectedLayer && manipulateMode && (
-        <div className="layer-controls">
+        <div className={`layer-controls ${uiVisible ? 'visible' : 'hidden'}`}>
           <button onClick={() => {
             const layer = videoLayers.find(l => l.id === selectedLayer)
             updateLayer(selectedLayer, { 
@@ -443,7 +671,14 @@ export default function TouchVJ() {
             <option value="overlay">Overlay</option>
             <option value="multiply">Multiply</option>
             <option value="color-dodge">Color Dodge</option>
+            <option value="color-burn">Color Burn</option>
+            <option value="hard-light">Hard Light</option>
+            <option value="soft-light">Soft Light</option>
             <option value="difference">Difference</option>
+            <option value="exclusion">Exclusion</option>
+            <option value="hue">Hue</option>
+            <option value="saturation">Saturation</option>
+            <option value="luminosity">Luminosity</option>
           </select>
           
           <button 
@@ -456,7 +691,7 @@ export default function TouchVJ() {
       )}
       
       {/* Audio Viz */}
-      <div className="audio-viz">
+      <div className={`audio-viz ${uiVisible ? 'visible' : 'hidden'}`}>
         <div className="bar" style={{ width: `${audioData.bass * 100}%` }}>🔊</div>
         <div className="bar" style={{ width: `${audioData.mid * 100}%` }}>🎸</div>
         <div className="bar" style={{ width: `${audioData.high * 100}%` }}>🎹</div>
