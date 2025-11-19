@@ -19,6 +19,7 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer, audioAnalyzer, onAudioSe
   const [currentMode, setCurrentMode] = useState('psychedelic')
   const [isVJingDrawMode, setIsVJingDrawMode] = useState(false)
   const [isEditorMode, setIsEditorMode] = useState(false)
+  const [selectedLayerId, setSelectedLayerId] = useState(null)
   const [currentShapeData, setCurrentShapeData] = useState(null)
   const canvasRef = useRef(null)
   const animationFrameRef = useRef(null)
@@ -53,17 +54,20 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer, audioAnalyzer, onAudioSe
     })
   }, [currentShapeData, currentMode, audioData, layers, onUpdateLayer])
 
-  // Animation continue pour modes time-based (psychedelic, vortex)
+  // Animation continue TOUJOURS ACTIVE (audio-réactivité permanente)
   useEffect(() => {
-    if (!['psychedelic', 'vortex'].includes(currentMode)) return
     if (!layers.length) return
+    if (isEditorMode) return // Pas d'animation en mode Editor
 
     const animate = () => {
-      // Créer un pseudo shape data pour l'animation continue
+      // Créer un pseudo shape data basé sur audio pour animation continue
       const pseudoShapeData = {
         shape: 'circle',
-        velocity: 0,
-        points: [{ x: 0.5, y: 0.5 }],
+        velocity: (audioData.overall || 0) * 500,
+        points: [
+          { x: 0.5, y: 0.5 },
+          { x: 0.5 + (audioData.mid || 0) * 0.1, y: 0.5 + (audioData.high || 0) * 0.1 }
+        ],
         duration: 1000
       }
 
@@ -89,7 +93,7 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer, audioAnalyzer, onAudioSe
         cancelAnimationFrame(animationFrameRef.current)
       }
     }
-  }, [currentMode, audioData, layers, onUpdateLayer])
+  }, [currentMode, audioData, layers, onUpdateLayer, isEditorMode])
 
   // Build CSS filter string from filters object
   const buildFilterString = (filters) => {
@@ -205,6 +209,8 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer, audioAnalyzer, onAudioSe
 
   // Si en mode Editor
   if (isEditorMode) {
+    const selectedLayer = layers.find(l => l.id === selectedLayerId)
+    
     return (
       <div className="artistic-vj editor-mode">
         <div className="editor-container">
@@ -216,13 +222,24 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer, audioAnalyzer, onAudioSe
           </header>
           
           <div className="editor-content">
+            {/* Layers list */}
             <div className="editor-section">
-              <h3>Layers</h3>
+              <h3>Layers ({layers.length})</h3>
               <div className="layers-list">
-                {layers.map(layer => (
-                  <div key={layer.id} className="layer-card">
-                    <span>{layer.name}</span>
-                    <button onClick={() => onUpdateLayer(layer.id, { visible: !layer.visible })}>
+                {layers.map((layer, index) => (
+                  <div 
+                    key={layer.id} 
+                    className={`layer-card ${selectedLayerId === layer.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedLayerId(layer.id)}
+                  >
+                    <span className="layer-index">{index + 1}</span>
+                    <span className="layer-name">{layer.name}</span>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onUpdateLayer(layer.id, { visible: !layer.visible })
+                      }}
+                    >
                       {layer.visible ? '👁️' : '👁️‍🗨️'}
                     </button>
                   </div>
@@ -230,6 +247,53 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer, audioAnalyzer, onAudioSe
               </div>
             </div>
             
+            {/* Layer properties */}
+            {selectedLayer && (
+              <div className="editor-section">
+                <h3>🎨 {selectedLayer.name}</h3>
+                
+                {/* Blend Mode */}
+                <div className="control-group">
+                  <label>Blend Mode</label>
+                  <select
+                    value={selectedLayer.blendMode || 'normal'}
+                    onChange={(e) => onUpdateLayer(selectedLayer.id, { blendMode: e.target.value })}
+                  >
+                    <option value="normal">Normal</option>
+                    <option value="multiply">Multiply</option>
+                    <option value="screen">Screen</option>
+                    <option value="overlay">Overlay</option>
+                    <option value="darken">Darken</option>
+                    <option value="lighten">Lighten</option>
+                    <option value="color-dodge">Color Dodge</option>
+                    <option value="color-burn">Color Burn</option>
+                    <option value="hard-light">Hard Light</option>
+                    <option value="soft-light">Soft Light</option>
+                    <option value="difference">Difference</option>
+                    <option value="exclusion">Exclusion</option>
+                    <option value="hue">Hue</option>
+                    <option value="saturation">Saturation</option>
+                    <option value="color">Color</option>
+                    <option value="luminosity">Luminosity</option>
+                  </select>
+                </div>
+                
+                {/* Opacity */}
+                <div className="control-group">
+                  <label>Opacity: {Math.round((selectedLayer.opacity || 1) * 100)}%</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={selectedLayer.opacity || 1}
+                    onChange={(e) => onUpdateLayer(selectedLayer.id, { opacity: parseFloat(e.target.value) })}
+                  />
+                </div>
+              </div>
+            )}
+            
+            {/* Mode selector */}
             <div className="editor-section">
               <h3>Mode: {currentMode}</h3>
               <ModeSelector 
