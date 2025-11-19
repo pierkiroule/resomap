@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import Layer from './Layer'
 import TouchInteraction from './TouchInteraction'
 import VideoCapture from './VideoCapture'
-import FloatingPanel from './FloatingPanel'
+import SmartFloatingPanel from './SmartFloatingPanel'
 import './Viewer.css'
 
 function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer, selectedLayer }) {
@@ -159,17 +159,17 @@ function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer, selectedLayer
       )}
 
       {selectedLayer && showLayerProps && (
-        <FloatingPanel
+        <SmartFloatingPanel
           title={`⚙️ ${selectedLayer.name}`}
-          defaultPosition={{ x: window.innerWidth - 360, y: 100 }}
-          defaultSize={{ width: 340, height: 'auto' }}
+          defaultPosition="top-right"
+          defaultWidth={340}
           onClose={() => setShowLayerProps(false)}
         >
           <LayerProperties 
             layer={selectedLayer}
             onUpdateLayer={onUpdateLayer}
           />
-        </FloatingPanel>
+        </SmartFloatingPanel>
       )}
 
       {/* Floating button to open props */}
