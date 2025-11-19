@@ -1,5 +1,6 @@
 .audio-source-selector {
-  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 300px;
 }
 
 .audio-source-btn {

@@ -96,36 +96,37 @@ function VJingDrawMode({
     return null
   }
 
+  // Gérer double-tap pour sortir
+  const lastTapRef = React.useRef(0)
+  
+  const handleDoubleTap = () => {
+    const now = Date.now()
+    const DOUBLE_TAP_DELAY = 300 // ms
+    
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+      // Double tap détecté
+      onExitMode()
+    }
+    
+    lastTapRef.current = now
+  }
+  
+  // Gérer ESC pour sortir
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onExitMode()
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onExitMode])
+
   return (
-    <div className="vjing-draw-mode">
-      {/* Exit button - minimal */}
-      <button className="exit-vjing" onClick={onExitMode} title="Retour au Mode Selection">
-        ←
-      </button>
-
-      {/* Mode indicator */}
-      <div className="mode-indicator">
-        {currentMode === 'psychedelic' && '🌈'}
-        {currentMode === 'glitch' && '⚡'}
-        {currentMode === 'smooth' && '🌊'}
-        {currentMode === 'strobe' && '💥'}
-        {currentMode === 'vortex' && '🌀'}
-        {currentMode === 'painting' && '🎨'}
-      </div>
-
-      {/* Audio visualizer - subtle */}
-      {audioData && (audioData.bass > 0 || audioData.mid > 0 || audioData.high > 0) && (
-        <div className="audio-pulse">
-          <div 
-            className="pulse-ring" 
-            style={{ 
-              transform: `scale(${1 + audioData.overall * 2})`,
-              opacity: audioData.overall * 0.5
-            }}
-          />
-        </div>
-      )}
-
+    <div className="vjing-draw-mode" onClick={handleDoubleTap}>
+      {/* AUCUN BOUTON - Fullscreen pur */}
+      
       {/* Layers container */}
       <div className="vjing-canvas">
         {layers.filter(l => l.visible).map(renderLayer)}
@@ -136,11 +137,6 @@ function VJingDrawMode({
           audioData={audioData}
           mode={currentMode}
         />
-      </div>
-
-      {/* Hint - appears briefly */}
-      <div className="vjing-hint">
-        👆 Touche l'écran pour créer
       </div>
     </div>
   )

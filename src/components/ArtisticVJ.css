@@ -130,49 +130,58 @@
   background: linear-gradient(to top, #f7ff00, #db36a4);
 }
 
-/* Mode selector container */
+/* Mode selector container - Plus compact */
 .mode-selector-container {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 200;
-  max-width: 400px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* START VJing button */
+/* START VJing button - ÉNORME */
 .start-vjing-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
+  gap: 1rem;
+  padding: 1.5rem 3rem;
   background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
   border: none;
-  border-radius: 12px;
+  border-radius: 20px;
   color: #fff;
-  font-size: 1.125rem;
+  font-size: 1.5rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.5);
+  box-shadow: 0 8px 30px rgba(255, 107, 107, 0.6);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  width: 100%;
+  max-width: 400px;
 }
 
 .start-vjing-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 30px rgba(255, 107, 107, 0.7);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(255, 107, 107, 0.8);
 }
 
 .start-vjing-btn:active {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .start-vjing-btn .btn-icon {
-  font-size: 1.5rem;
+  font-size: 2rem;
   animation: iconBounce 1s ease-in-out infinite;
 }
 
@@ -185,17 +194,17 @@
   }
 }
 
-/* Editor button */
+/* Editor button - Subtil */
 .editor-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -204,7 +213,8 @@
 
 .editor-btn:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
   transform: translateY(-2px);
 }
 
