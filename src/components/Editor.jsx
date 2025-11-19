@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import LayerPanel from './LayerPanel'
 import AudioReactiveControl from './AudioReactiveControl'
 import PerformanceRecorder from './PerformanceRecorder'
+import SceneManager from './SceneManager'
 import './Editor.css'
 
 function Editor({ 
@@ -12,7 +13,13 @@ function Editor({
   onUpdateLayer, 
   onDeleteLayer,
   onReorderLayers,
-  onRestoreSnapshot 
+  onRestoreSnapshot,
+  scenes,
+  currentSceneIndex,
+  onSaveScene,
+  onLoadScene,
+  onDeleteScene,
+  onUpdateScene
 }) {
   const fileInputRef = useRef(null)
   const selectedLayer = layers.find(l => l.id === selectedLayerId)
@@ -361,6 +368,15 @@ function Editor({
           </div>
         </div>
       )}
+
+      <SceneManager
+        scenes={scenes}
+        currentSceneIndex={currentSceneIndex}
+        onSaveScene={onSaveScene}
+        onLoadScene={onLoadScene}
+        onDeleteScene={onDeleteScene}
+        onUpdateScene={onUpdateScene}
+      />
 
       <PerformanceRecorder 
         layers={layers}

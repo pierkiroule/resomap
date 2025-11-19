@@ -1,12 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Editor from './components/Editor'
 import Viewer from './components/Viewer'
+import PerformMode from './components/PerformMode'
+import ModeSwitcher from './components/ModeSwitcher'
 import AudioAnalyzer from './utils/AudioAnalyzer'
 import './App.css'
 
 function App() {
+  // VJ Mode System
+  const [currentMode, setCurrentMode] = useState('prepare') // 'prepare' or 'perform'
+  
+  // Scene Management
+  const [scenes, setScenes] = useState([])
+  const [currentSceneIndex, setCurrentSceneIndex] = useState(0)
+  
+  // Layer Management
   const [layers, setLayers] = useState([])
   const [selectedLayerId, setSelectedLayerId] = useState(null)
+  
+  // Audio System
   const [audioData, setAudioData] = useState({ bass: 0, mid: 0, high: 0, overall: 0 })
   const audioAnalyzerRef = useRef(null)
   const animationFrameRef = useRef(null)
@@ -109,29 +121,102 @@ function App() {
     setLayers(result)
   }
 
+  // Scene Management Functions
+  const saveCurrentScene = () => {
+    const scene = {
+      id: Date.now(),
+      name: `Scene ${scenes.length + 1}`,
+      layers: JSON.parse(JSON.stringify(layers)), // Deep copy
+      timestamp: new Date().toISOString()
+    }
+    setScenes([...scenes, scene])
+    return scene
+  }
+
+  const loadScene = (index) => {
+    if (index >= 0 && index < scenes.length) {
+      setLayers(JSON.parse(JSON.stringify(scenes[index].layers)))
+      setCurrentSceneIndex(index)
+    }
+  }
+
+  const deleteScene = (index) => {
+    const newScenes = scenes.filter((_, i) => i !== index)
+    setScenes(newScenes)
+    if (currentSceneIndex >= newScenes.length && newScenes.length > 0) {
+      setCurrentSceneIndex(newScenes.length - 1)
+    }
+  }
+
+  const updateCurrentScene = () => {
+    if (scenes.length > 0 && currentSceneIndex < scenes.length) {
+      const updatedScenes = [...scenes]
+      updatedScenes[currentSceneIndex] = {
+        ...updatedScenes[currentSceneIndex],
+        layers: JSON.parse(JSON.stringify(layers))
+      }
+      setScenes(updatedScenes)
+    }
+  }
+
+  // Mode switching
+  const handleModeChange = (mode) => {
+    setCurrentMode(mode)
+    if (mode === 'perform' && scenes.length === 0 && layers.length > 0) {
+      // Auto-save current state as first scene when entering perform mode
+      saveCurrentScene()
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🌙 Resomap - Générateur de Rêve Multimédia</h1>
+        <div className="header-content">
+          <h1>🌙 Resomap VJ</h1>
+          <ModeSwitcher 
+            currentMode={currentMode}
+            onModeChange={handleModeChange}
+          />
+        </div>
       </header>
-      <div className="app-content">
-        <Editor 
-          layers={layers}
-          selectedLayerId={selectedLayerId}
-          onSelectLayer={setSelectedLayerId}
-          onAddLayer={addLayer}
-          onUpdateLayer={updateLayer}
-          onDeleteLayer={deleteLayer}
-          onReorderLayers={reorderLayers}
-          onRestoreSnapshot={restoreSnapshot}
-        />
-        <Viewer 
+
+      {currentMode === 'prepare' ? (
+        // PREPARE MODE - Configuration et édition
+        <div className="app-content prepare-mode">
+          <Editor 
+            layers={layers}
+            selectedLayerId={selectedLayerId}
+            onSelectLayer={setSelectedLayerId}
+            onAddLayer={addLayer}
+            onUpdateLayer={updateLayer}
+            onDeleteLayer={deleteLayer}
+            onReorderLayers={reorderLayers}
+            onRestoreSnapshot={restoreSnapshot}
+            scenes={scenes}
+            currentSceneIndex={currentSceneIndex}
+            onSaveScene={saveCurrentScene}
+            onLoadScene={loadScene}
+            onDeleteScene={deleteScene}
+            onUpdateScene={updateCurrentScene}
+          />
+          <Viewer 
+            layers={layers}
+            audioData={audioData}
+            audioAnalyzer={audioAnalyzerRef.current}
+            onUpdateLayer={updateLayer}
+          />
+        </div>
+      ) : (
+        // PERFORM MODE - Performance live plein écran
+        <PerformMode
           layers={layers}
           audioData={audioData}
-          audioAnalyzer={audioAnalyzerRef.current}
           onUpdateLayer={updateLayer}
+          scenes={scenes}
+          currentSceneIndex={currentSceneIndex}
+          onSceneChange={loadScene}
         />
-      </div>
+      )}
     </div>
   )
 }
