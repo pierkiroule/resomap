@@ -6,9 +6,9 @@
 }
 
 .viewer-header {
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   background: rgba(22, 33, 62, 0.8);
-  border-bottom: 2px solid #533483;
+  border-bottom: 1px solid rgba(83, 52, 131, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -17,7 +17,7 @@
 
 .viewer-header h2 {
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
@@ -29,12 +29,12 @@
 }
 
 .performance-toggle {
-  padding: 0.6rem 1.2rem;
+  padding: 0.5rem 1rem;
   background: linear-gradient(135deg, #ff3366 0%, #ff6b9d 100%);
-  border: 2px solid transparent;
+  border: none;
   color: white;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -86,13 +86,7 @@
 }
 
 .audio-level-display {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  background: rgba(15, 52, 96, 0.6);
-  padding: 0.5rem;
-  border-radius: 6px;
-  min-width: 150px;
+  display: none; /* Hide in simplified mode, shown only in PERFORM */
 }
 
 .level-bar {
@@ -114,12 +108,7 @@
 }
 
 .viewer-info {
-  color: #a8b2d1;
-  font-size: 0.9rem;
-  background: rgba(102, 126, 234, 0.2);
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  white-space: nowrap;
+  display: none; /* Hide in simplified mode */
 }
 
 .backdrop-buttons {
@@ -182,18 +171,7 @@
 }
 
 .performance-hints {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  color: #00ff88;
-  font-size: 0.75rem;
-  pointer-events: none;
-  z-index: 100;
+  display: none; /* Hide hints in simplified mode */
 }
 
 .performance-hints p {

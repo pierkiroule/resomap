@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import Editor from './components/Editor'
+import SimplifiedEditor from './components/SimplifiedEditor'
 import Viewer from './components/Viewer'
 import PerformMode from './components/PerformMode'
 import ModeSwitcher from './components/ModeSwitcher'
@@ -181,9 +181,9 @@ function App() {
       </header>
 
       {currentMode === 'prepare' ? (
-        // PREPARE MODE - Configuration et édition
+        // PREPARE MODE - Configuration et édition simplifiée
         <div className="app-content prepare-mode">
-          <Editor 
+          <SimplifiedEditor 
             layers={layers}
             selectedLayerId={selectedLayerId}
             onSelectLayer={setSelectedLayerId}
@@ -191,13 +191,11 @@ function App() {
             onUpdateLayer={updateLayer}
             onDeleteLayer={deleteLayer}
             onReorderLayers={reorderLayers}
-            onRestoreSnapshot={restoreSnapshot}
             scenes={scenes}
             currentSceneIndex={currentSceneIndex}
             onSaveScene={saveCurrentScene}
             onLoadScene={loadScene}
             onDeleteScene={deleteScene}
-            onUpdateScene={updateCurrentScene}
           />
           <Viewer 
             layers={layers}
