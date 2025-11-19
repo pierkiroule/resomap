@@ -169,3 +169,61 @@
   font-size: 0.8rem;
   text-align: right;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .audio-config-panel {
+    min-width: 260px;
+    padding: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .audio-config-panel h5 {
+    font-size: 0.85rem;
+  }
+  
+  .audio-config-panel label > span:first-child {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+  
+  .config-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+  }
+  
+  .audio-config-panel {
+    min-width: 240px;
+    padding: 0.6rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .audio-config-panel h5 {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .audio-config-panel label {
+    margin-bottom: 0.6rem;
+  }
+  
+  .audio-config-panel label > span:first-child {
+    font-size: 0.7rem;
+  }
+  
+  .audio-config-panel select,
+  .audio-config-panel input[type="number"] {
+    padding: 0.35rem;
+    font-size: 0.8rem;
+  }
+}
