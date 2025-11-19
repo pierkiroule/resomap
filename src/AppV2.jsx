@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import TouchFX from './components/TouchFX'
 import './AppV2.css'
 
 /**
@@ -143,31 +144,40 @@ function AppV2() {
             <p>Touche pour commencer</p>
           </div>
         ) : (
-          <div className="layers-render">
-            {layers.filter(l => l.visible).map(layer => (
-              <div
-                key={layer.id}
-                className="layer-render"
-                style={{
-                  mixBlendMode: layer.blendMode,
-                  opacity: layer.opacity
-                }}
-              >
-                {layer.type === 'video' && (
-                  <video src={layer.url} autoPlay loop muted playsInline />
-                )}
-                {layer.type === 'image' && (
-                  <img src={layer.url} alt={layer.name} />
-                )}
-                {layer.type === 'audio' && (
-                  <div className="audio-visual">
-                    <audio src={layer.url} autoPlay loop />
-                    <div className="audio-icon">🎵</div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="layers-render">
+              {layers.filter(l => l.visible).map(layer => (
+                <div
+                  key={layer.id}
+                  className="layer-render"
+                  style={{
+                    mixBlendMode: layer.blendMode,
+                    opacity: layer.opacity
+                  }}
+                >
+                  {layer.type === 'video' && (
+                    <video src={layer.url} autoPlay loop muted playsInline />
+                  )}
+                  {layer.type === 'image' && (
+                    <img src={layer.url} alt={layer.name} />
+                  )}
+                  {layer.type === 'audio' && (
+                    <div className="audio-visual">
+                      <audio src={layer.url} autoPlay loop />
+                      <div className="audio-icon">🎵</div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            {/* Touch FX overlay */}
+            <TouchFX 
+              enabled={true} 
+              intensity={1.2}
+              audioData={audioData}
+            />
+          </>
         )}
       </div>
 
