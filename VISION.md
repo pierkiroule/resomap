@@ -26,6 +26,7 @@ Fusion du VJing audio-réactif avec le contrôle tactile en temps réel, créant
 - **Displacement Maps** : Distorsions basées sur audio
 - **Post-Processing** : Bloom, Vignette, Grain
 - **Trails/Echo** : Traînées visuelles des mouvements
+- **Animator FX** : Suites d'effets pré-composées (Nebula Drift, Prism Pulse)
 
 ### 4. 🎯 **Zones de Déclenchement (Trigger Zones)**
 - Diviser l'écran en zones interactives
@@ -54,6 +55,7 @@ Fusion du VJing audio-réactif avec le contrôle tactile en temps réel, créant
 - Wipe effects (horizontal, vertical, radial)
 - Random transition modes
 - Auto-pilot mode avec IA
+- Blend envelopes paramétrables (spline, ease, sync BPM)
 
 ### 8. 📊 **Visualisations Audio**
 - Waveform en temps réel
@@ -77,38 +79,46 @@ Fusion du VJing audio-réactif avec le contrôle tactile en temps réel, créant
 - Cloud save des performances
 
 ### 11. 💡 **Intelligence Artificielle**
-- **Auto-VJ** : IA qui performe seule
-- **Style Transfer** : Application de styles artistiques
-- **Beat Prediction** : Anticipation des drops
-- **Smart Mixing** : Suggestions de mélanges
-- **Mood Detection** : Adaptation à l'ambiance
+ - **Auto-VJ** : IA qui performe seule
+ - **Style Transfer** : Application de styles artistiques
+ - **Beat Prediction** : Anticipation des drops
+ - **Smart Mixing** : Suggestions de mélanges
+ - **Mood Detection** : Adaptation à l'ambiance
 
 ### 12. 🎪 **Modes de Performance Spéciaux**
-- **Kaléidoscope Mode** : Symétries infinies
-- **Fractal Mode** : Patterns fractals génératifs
-- **Particle System** : Systèmes de particules 3D
-- **Shader Playground** : Shaders GLSL custom
-- **Live Coding** : Coding visuel en direct
+ - **Kaléidoscope Mode** : Symétries infinies
+ - **Fractal Mode** : Patterns fractals génératifs
+ - **Particle System** : Systèmes de particules 3D
+ - **Shader Playground** : Shaders GLSL custom
+ - **Live Coding** : Coding visuel en direct
 
 ### 13. 🔊 **Réactivité Audio Contextuelle**
-- Différents profils par genre musical
-- Adaptation automatique (techno, hip-hop, ambient)
-- Presets par BPM range
-- Détection de structure musicale (intro, build, drop)
+ - Différents profils par genre musical
+ - Adaptation automatique (techno, hip-hop, ambient)
+ - Presets par BPM range
+ - Détection de structure musicale (intro, build, drop)
 
 ### 14. 📱 **Mobile-First Features**
-- Gyroscope pour contrôler rotation
-- Accéléromètre pour shake effects
-- Haptic feedback sur beats
-- Force touch pour intensité
-- Mode portrait optimisé
+ - Gyroscope pour contrôler rotation
+ - Accéléromètre pour shake effects
+ - Haptic feedback sur beats
+ - Force touch pour intensité
+ - Mode portrait optimisé
 
 ### 15. 🎨 **Creative Tools**
-- Générateur de patterns procéduraux
-- Library de shaders communautaire
-- Brush tools pour dessiner des effets
-- Masques custom
-- Templates de compositions
+ - Générateur de patterns procéduraux
+ - Library de shaders communautaire
+ - Brush tools pour dessiner des effets
+ - Masques custom
+ - Templates de compositions
+
+### 16. 🌀 **Dreamflow Timeline & Animator FX**
+- Timeline multicouche contrôlant modes de fusion, filtres et intensités
+- Clips d'Animator FX précomposés (Dream Macros) éditables
+- Mood curves globales synchronisées au BPM pour simuler un flux onirique
+- Capture/replay de gestes tactiles comme “strokes” temporels
+- Dream seeds : variations pseudo-aléatoires mais reproductibles
+- Vue storyboard pour planifier les phases (abysses, montée, éveil)
 
 ## 🎯 Implémentation Prioritaire
 

@@ -7,12 +7,14 @@ Une webapp React moderne pour créer des compositions multimédias immersives av
 - **🎨 Éditeur Multi-Calques** : Superposez et organisez différents types de médias
 - **👁️ Viewer en Temps Réel** : Visualisez vos créations instantanément avec différents fonds
 - **📁 Support Multi-Format** : Images (JPG, PNG, GIF), Vidéos (MP4, WebM), Audio (MP3, WAV)
-- **🎭 Effets Avancés** :
-  - **Chromakey** (fond vert/bleu) avec contrôle de seuil et lissage
-  - **12 modes de fusion** (overlay, multiply, screen, etc.)
-  - **8 filtres visuels** : Blur, Brightness, Contrast, Saturate, Hue Rotate, Grayscale, Sepia, Invert
-  - **4 presets de filtres** : Vibrant, Dramatique, Noir & Blanc, Vintage
-  - **Opacité, rotation, échelle** par calque
+  - **🎭 Effets Avancés** :
+    - **Chromakey** (fond vert/bleu) avec contrôle de seuil et lissage
+    - **12 modes de fusion** (overlay, multiply, screen, etc.)
+    - **Timeline de blend** : planifiez les changements de modes de fusion comme des clips
+    - **Animator FX** : suites d'effets pré-orchestrées audio-réactives
+    - **8 filtres visuels** : Blur, Brightness, Contrast, Saturate, Hue Rotate, Grayscale, Sepia, Invert
+    - **4 presets de filtres** : Vibrant, Dramatique, Noir & Blanc, Vintage
+    - **Opacité, rotation, échelle** par calque
 - **🎨 Gestion des Transparences** : 
   - 4 types de fond : Noir, Blanc, Grille de transparence, Dégradé
   - Visualisation optimale des effets d'overlay et de mélange
@@ -134,11 +136,13 @@ Active le mode révolutionnaire de VJing tactile audio-réactif :
 - Modulation automatique sync audio
 - Presets audio-réactifs
 
-### Recording & Playback
+### Dreamflow Timeline & Recording
 - 🎬 Enregistrez vos performances live
 - 📸 Prenez des snapshots de vos scènes
 - ▶️ Rejouez vos performances
 - 💾 Sauvegardez et partagez vos créations
+- 🌀 Planifiez vos transitions de modes de fusion comme une timeline multicouche
+- 🌗 Utilisez des Animator FX (Nebula Drift, Prism Pulse…) pour générer un flux onirique
 
 ### 🎥 Loop Video Recorder (RÉVOLUTIONNAIRE !)
 Capturer des loops vidéo de 10 secondes avec effet **ping-pong automatique** :
