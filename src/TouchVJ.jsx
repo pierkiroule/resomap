@@ -7,10 +7,22 @@ export default function TouchVJ() {
   const particlesRef = useRef([])
   const animationRef = useRef(null)
   
+  // Media layers
+  const [videoLayers, setVideoLayers] = useState([])
+  const [selectedLayer, setSelectedLayer] = useState(null)
+  const videoRefs = useRef({})
+  
+  // Audio
+  const audioRef = useRef(null)
+  const audioContextRef = useRef(null)
+  const analyserRef = useRef(null)
+  const dataArrayRef = useRef(null)
+  
   const [mode, setMode] = useState('particles') // particles, trails, ripples, paint, kaleidoscope
   const [audioData, setAudioData] = useState({ bass: 0.5, mid: 0.5, high: 0.5 })
+  const [manipulateMode, setManipulateMode] = useState(false) // Toggle between draw/manipulate
   
-  // Initialize canvas
+  // Initialize canvas and audio
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
@@ -36,27 +48,128 @@ export default function TouchVJ() {
         return p.life > 0
       })
       
+      // Update audio data if analyzer exists
+      if (analyserRef.current && dataArrayRef.current) {
+        analyserRef.current.getByteFrequencyData(dataArrayRef.current)
+        const data = dataArrayRef.current
+        
+        // Calculate frequency bands
+        const bass = data.slice(0, 8).reduce((a, b) => a + b, 0) / (8 * 255)
+        const mid = data.slice(8, 16).reduce((a, b) => a + b, 0) / (8 * 255)
+        const high = data.slice(16, 24).reduce((a, b) => a + b, 0) / (8 * 255)
+        
+        setAudioData({ bass, mid, high })
+      }
+      
       animationRef.current = requestAnimationFrame(animate)
     }
     animate()
     
-    // Mock audio data (replace with real audio analyzer)
-    const audioInterval = setInterval(() => {
-      setAudioData({
-        bass: Math.random() * 0.5 + 0.3,
-        mid: Math.random() * 0.5 + 0.3,
-        high: Math.random() * 0.5 + 0.3
-      })
-    }, 100)
-    
     return () => {
       window.removeEventListener('resize', resize)
       cancelAnimationFrame(animationRef.current)
-      clearInterval(audioInterval)
     }
   }, [])
   
+  // Handle audio upload
+  const handleAudioUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    
+    const url = URL.createObjectURL(file)
+    const audio = new Audio(url)
+    audioRef.current = audio
+    
+    // Setup Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    audioContextRef.current = audioContext
+    
+    const analyser = audioContext.createAnalyser()
+    analyser.fftSize = 64
+    analyserRef.current = analyser
+    
+    const dataArray = new Uint8Array(analyser.frequencyBinCount)
+    dataArrayRef.current = dataArray
+    
+    const source = audioContext.createMediaElementSource(audio)
+    source.connect(analyser)
+    analyser.connect(audioContext.destination)
+    
+    audio.loop = true
+    audio.play()
+  }
+  
+  // Handle video upload
+  const handleVideoUpload = (e) => {
+    const files = Array.from(e.target.files)
+    
+    files.forEach(file => {
+      const url = URL.createObjectURL(file)
+      const id = Date.now() + Math.random()
+      
+      const newLayer = {
+        id,
+        name: file.name,
+        url,
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        scale: 1,
+        rotation: 0,
+        opacity: 1,
+        blendMode: 'screen',
+        audioReactive: {
+          scale: true,
+          rotation: true,
+          opacity: false
+        }
+      }
+      
+      setVideoLayers(prev => [...prev, newLayer])
+    })
+  }
+  
+  // Update video layer
+  const updateLayer = (id, updates) => {
+    setVideoLayers(prev => prev.map(layer => 
+      layer.id === id ? { ...layer, ...updates } : layer
+    ))
+  }
+  
+  // Delete layer
+  const deleteLayer = (id) => {
+    const layer = videoLayers.find(l => l.id === id)
+    if (layer) URL.revokeObjectURL(layer.url)
+    setVideoLayers(prev => prev.filter(l => l.id !== id))
+    if (selectedLayer === id) setSelectedLayer(null)
+  }
+  
   // Touch/Mouse handlers
+  const handlePointerDown = (e) => {
+    e.preventDefault()
+    const canvas = canvasRef.current
+    const rect = canvas.getBoundingClientRect()
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
+    
+    if (manipulateMode) {
+      // Check if touching a video layer
+      for (let i = videoLayers.length - 1; i >= 0; i--) {
+        const layer = videoLayers[i]
+        const dx = x - layer.x
+        const dy = y - layer.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        
+        if (dist < 100) {
+          setSelectedLayer(layer.id)
+          return
+        }
+      }
+      setSelectedLayer(null)
+    } else {
+      handlePointer(e)
+    }
+  }
+  
   const handlePointer = (e) => {
     e.preventDefault()
     const canvas = canvasRef.current
@@ -68,22 +181,28 @@ export default function TouchVJ() {
       const x = touch.clientX - rect.left
       const y = touch.clientY - rect.top
       
-      switch(mode) {
-        case 'particles':
-          spawnParticles(x, y)
-          break
-        case 'trails':
-          addTrail(x, y)
-          break
-        case 'ripples':
-          addRipple(x, y)
-          break
-        case 'paint':
-          paint(x, y)
-          break
-        case 'kaleidoscope':
-          spawnKaleidoscope(x, y)
-          break
+      if (manipulateMode && selectedLayer) {
+        // Move selected layer
+        updateLayer(selectedLayer, { x, y })
+      } else {
+        // Draw effects
+        switch(mode) {
+          case 'particles':
+            spawnParticles(x, y)
+            break
+          case 'trails':
+            addTrail(x, y)
+            break
+          case 'ripples':
+            addRipple(x, y)
+            break
+          case 'paint':
+            paint(x, y)
+            break
+          case 'kaleidoscope':
+            spawnKaleidoscope(x, y)
+            break
+        }
       }
     })
   }
@@ -194,16 +313,80 @@ export default function TouchVJ() {
   
   return (
     <div className="touch-vj">
+      {/* Video Layers */}
+      <div className="video-layers">
+        {videoLayers.map(layer => {
+          const audioScale = layer.audioReactive.scale ? (1 + audioData.bass * 0.5) : 1
+          const audioRotation = layer.audioReactive.rotation ? (audioData.mid * 360) : 0
+          const audioOpacity = layer.audioReactive.opacity ? audioData.high : layer.opacity
+          
+          return (
+            <video
+              key={layer.id}
+              ref={el => videoRefs.current[layer.id] = el}
+              src={layer.url}
+              autoPlay
+              loop
+              muted
+              className={`video-layer ${selectedLayer === layer.id ? 'selected' : ''}`}
+              style={{
+                left: layer.x + 'px',
+                top: layer.y + 'px',
+                transform: `translate(-50%, -50%) scale(${layer.scale * audioScale}) rotate(${layer.rotation + audioRotation}deg)`,
+                opacity: audioOpacity,
+                mixBlendMode: layer.blendMode
+              }}
+              onLoadedData={(e) => e.target.play()}
+            />
+          )
+        })}
+      </div>
+      
+      {/* Canvas for touch effects */}
       <canvas
         ref={canvasRef}
         className="vj-canvas"
-        onTouchStart={handlePointer}
+        onTouchStart={handlePointerDown}
         onTouchMove={handlePointer}
-        onMouseDown={handlePointer}
+        onMouseDown={handlePointerDown}
         onMouseMove={(e) => e.buttons === 1 && handlePointer(e)}
       />
       
+      {/* Top UI */}
       <div className="ui">
+        <input
+          type="file"
+          id="audio-upload"
+          accept="audio/*"
+          onChange={handleAudioUpload}
+          style={{ display: 'none' }}
+        />
+        <label htmlFor="audio-upload" className="upload-btn" title="Upload Audio">
+          🎵
+        </label>
+        
+        <input
+          type="file"
+          id="video-upload"
+          accept="video/*"
+          multiple
+          onChange={handleVideoUpload}
+          style={{ display: 'none' }}
+        />
+        <label htmlFor="video-upload" className="upload-btn" title="Upload Video">
+          🎬
+        </label>
+        
+        <button 
+          className={manipulateMode ? 'active' : ''}
+          onClick={() => setManipulateMode(!manipulateMode)}
+          title="Toggle Manipulate/Draw"
+        >
+          {manipulateMode ? '🖐️' : '✏️'}
+        </button>
+        
+        <div className="separator" />
+        
         <button 
           className={mode === 'particles' ? 'active' : ''}
           onClick={() => setMode('particles')}
@@ -237,6 +420,59 @@ export default function TouchVJ() {
         <button className="clear" onClick={clear}>🗑️</button>
       </div>
       
+      {/* Layer Controls */}
+      {selectedLayer && manipulateMode && (
+        <div className="layer-controls">
+          <button onClick={() => {
+            const layer = videoLayers.find(l => l.id === selectedLayer)
+            updateLayer(selectedLayer, { 
+              scale: Math.max(0.5, layer.scale - 0.1) 
+            })
+          }}>-</button>
+          <span>Scale</span>
+          <button onClick={() => {
+            const layer = videoLayers.find(l => l.id === selectedLayer)
+            updateLayer(selectedLayer, { 
+              scale: Math.min(3, layer.scale + 0.1) 
+            })
+          }}>+</button>
+          
+          <button onClick={() => {
+            const layer = videoLayers.find(l => l.id === selectedLayer)
+            updateLayer(selectedLayer, { 
+              rotation: layer.rotation - 15
+            })
+          }}>↺</button>
+          <span>Rotate</span>
+          <button onClick={() => {
+            const layer = videoLayers.find(l => l.id === selectedLayer)
+            updateLayer(selectedLayer, { 
+              rotation: layer.rotation + 15
+            })
+          }}>↻</button>
+          
+          <select 
+            value={videoLayers.find(l => l.id === selectedLayer)?.blendMode || 'screen'}
+            onChange={(e) => updateLayer(selectedLayer, { blendMode: e.target.value })}
+          >
+            <option value="normal">Normal</option>
+            <option value="screen">Screen</option>
+            <option value="overlay">Overlay</option>
+            <option value="multiply">Multiply</option>
+            <option value="color-dodge">Color Dodge</option>
+            <option value="difference">Difference</option>
+          </select>
+          
+          <button 
+            className="delete"
+            onClick={() => deleteLayer(selectedLayer)}
+          >
+            🗑️
+          </button>
+        </div>
+      )}
+      
+      {/* Audio Viz */}
       <div className="audio-viz">
         <div className="bar" style={{ width: `${audioData.bass * 100}%` }}>🔊</div>
         <div className="bar" style={{ width: `${audioData.mid * 100}%` }}>🎸</div>
