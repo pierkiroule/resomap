@@ -213,6 +213,22 @@
   box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
 }
 
+.action-btn.touch-fx.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+  animation: pulse-touch-fx 2s ease-in-out infinite;
+}
+
+@keyframes pulse-touch-fx {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+  }
+}
+
 /* Shortcuts Help - HIDDEN BY DEFAULT */
 .shortcuts-help {
   display: none; /* Hide for minimalism, only show on hover or key press */

@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react'
 import Layer from './Layer'
 import TouchInteraction from './TouchInteraction'
+import TouchEffectsCanvas from './TouchEffectsCanvas'
 import './PerformMode.css'
 
 function PerformMode({ layers, audioData, onUpdateLayer, scenes, currentSceneIndex, onSceneChange }) {
   const [showControls, setShowControls] = useState(true)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [touchEffectsEnabled, setTouchEffectsEnabled] = useState(true)
   const containerRef = useRef(null)
   const hideControlsTimer = useRef(null)
 
@@ -111,10 +113,18 @@ function PerformMode({ layers, audioData, onUpdateLayer, scenes, currentSceneInd
           <div className="perform-empty">
             <div className="empty-icon">🎭</div>
             <p>Mode Performance Activé</p>
-            <p className="empty-hint">Ajoutez des calques pour commencer</p>
+            <p className="empty-hint">Glissez votre doigt pour créer des effets visuels</p>
           </div>
         )}
       </div>
+
+      {/* Touch Effects Canvas Overlay */}
+      {touchEffectsEnabled && (
+        <TouchEffectsCanvas 
+          isActive={true}
+          audioData={audioData}
+        />
+      )}
 
       {/* Performance Controls Overlay */}
       <div className={`perform-controls ${showControls ? 'visible' : 'hidden'}`}>
@@ -174,6 +184,13 @@ function PerformMode({ layers, audioData, onUpdateLayer, scenes, currentSceneInd
 
         {/* Quick Actions */}
         <div className="quick-actions">
+          <button 
+            className={`action-btn touch-fx ${touchEffectsEnabled ? 'active' : ''}`}
+            onClick={() => setTouchEffectsEnabled(!touchEffectsEnabled)}
+            title="Effets tactiles"
+          >
+            ✨
+          </button>
           <button 
             className="action-btn fullscreen"
             onClick={toggleFullscreen}
