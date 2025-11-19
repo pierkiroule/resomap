@@ -1,20 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react'
 import DrawingCanvas from './DrawingCanvas'
 import ModeSelector from './ModeSelector'
+import PingPongVideo from './PingPongVideo'
+import VJingDrawMode from './VJingDrawMode'
 import { calculateEffects, applyEffectsToLayer } from '../utils/effectModes'
 import './ArtisticVJ.css'
 
 /**
  * ArtisticVJ - Composant principal pour le VJ tactile artistique
  * 
- * Intègre :
- * - DrawingCanvas pour les trails tactiles
- * - Rendu des vidéos/images avec effets
- * - Modes prédéfinis
- * - Audio-réactivité automatique
+ * Deux modes :
+ * 1. MODE SELECTION : Gérer les calques, choisir le mode
+ * 2. MODE VJING DRAW : Plein écran immersif pour dessiner
  */
 function ArtisticVJ({ layers, audioData, onUpdateLayer }) {
   const [currentMode, setCurrentMode] = useState('psychedelic')
+  const [isVJingDrawMode, setIsVJingDrawMode] = useState(false)
   const [currentShapeData, setCurrentShapeData] = useState(null)
   const canvasRef = useRef(null)
   const animationFrameRef = useRef(null)
@@ -139,12 +140,10 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer }) {
     // Render selon le type
     if (layer.type === 'video') {
       return (
-        <video
+        <PingPongVideo
           key={layer.id}
           src={layer.src}
-          autoPlay
-          loop
-          muted
+          layerId={layer.id}
           className="artistic-layer"
           style={style}
         />
@@ -187,14 +186,40 @@ function ArtisticVJ({ layers, audioData, onUpdateLayer }) {
     return null
   }
 
+  // Si en mode VJing Draw, afficher le mode immersif
+  if (isVJingDrawMode) {
+    return (
+      <VJingDrawMode
+        layers={layers}
+        audioData={audioData}
+        currentMode={currentMode}
+        onShapeDetected={handleShapeDetected}
+        onUpdateLayer={onUpdateLayer}
+        onExitMode={() => setIsVJingDrawMode(false)}
+      />
+    )
+  }
+
+  // Sinon, mode Selection
   return (
-    <div className="artistic-vj">
+    <div className="artistic-vj selection-mode">
       {/* Mode Selector - Floating top-left */}
       <div className="mode-selector-container">
         <ModeSelector 
           currentMode={currentMode}
           onModeChange={setCurrentMode}
         />
+        
+        {/* START VJing button */}
+        {layers.length > 0 && (
+          <button 
+            className="start-vjing-btn"
+            onClick={() => setIsVJingDrawMode(true)}
+          >
+            <span className="btn-icon">🎨</span>
+            <span className="btn-text">START VJing Draw</span>
+          </button>
+        )}
       </div>
 
       {/* Audio visualizer - Floating bottom */}

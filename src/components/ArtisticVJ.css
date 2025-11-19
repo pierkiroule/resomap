@@ -137,6 +137,52 @@
   left: 1rem;
   z-index: 200;
   max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* START VJing button */
+.start-vjing-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.start-vjing-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 30px rgba(255, 107, 107, 0.7);
+}
+
+.start-vjing-btn:active {
+  transform: translateY(-1px);
+}
+
+.start-vjing-btn .btn-icon {
+  font-size: 1.5rem;
+  animation: iconBounce 1s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 /* Audio visualizer bottom */
