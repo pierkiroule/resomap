@@ -1,6 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 import './TouchVJ.css'
 
+const ANIMATOR_FX_PRESETS = {
+  'Nebula Drift': (audio) => {
+    const hue = 40 + audio.mid * 180
+    const blur = (audio.bass * 6).toFixed(2)
+    const saturate = 120 + audio.high * 80
+    return `hue-rotate(${hue}deg) blur(${blur}px) saturate(${saturate}%)`
+  },
+  'Prism Pulse': (audio) => {
+    const contrast = 110 + audio.high * 60
+    const brightness = 90 + audio.mid * 40
+    const hue = audio.high * 90
+    return `contrast(${contrast}%) brightness(${brightness}%) hue-rotate(${hue}deg)`
+  },
+  'Lunar Bloom': (audio) => {
+    const blur = 2 + audio.mid * 4
+    const brightness = 110 + audio.high * 60
+    return `blur(${blur}px) brightness(${brightness}%)`
+  }
+}
+
 export default function TouchVJ() {
   const canvasRef = useRef(null)
   const ctxRef = useRef(null)
@@ -21,6 +41,28 @@ export default function TouchVJ() {
   const [mode, setMode] = useState('particles') // particles, trails, ripples, paint, kaleidoscope
   const [audioData, setAudioData] = useState({ bass: 0.5, mid: 0.5, high: 0.5 })
   const [manipulateMode, setManipulateMode] = useState(false) // Toggle between draw/manipulate
+  
+  // Dreamflow timeline
+  const [timelineClips, setTimelineClips] = useState([])
+  const [timelineTime, setTimelineTime] = useState(0)
+  const [timelineLength, setTimelineLength] = useState(30)
+  const [timelinePlaying, setTimelinePlaying] = useState(false)
+  const [clipDuration, setClipDuration] = useState(5)
+  const timelinePlayingRef = useRef(false)
+  const timelineLengthRef = useRef(30)
+  const lastTimelineTickRef = useRef(null)
+  
+  useEffect(() => {
+    timelinePlayingRef.current = timelinePlaying
+    if (!timelinePlaying) {
+      lastTimelineTickRef.current = null
+    }
+  }, [timelinePlaying])
+  
+  useEffect(() => {
+    timelineLengthRef.current = timelineLength
+    setTimelineTime(prev => Math.min(prev, timelineLength))
+  }, [timelineLength])
   
   // Recording
   const mediaRecorderRef = useRef(null)
@@ -76,34 +118,50 @@ export default function TouchVJ() {
     resize()
     window.addEventListener('resize', resize)
     
-    // Animation loop
-    const animate = () => {
-      // Fade effect for trails
-      ctx.fillStyle = 'rgba(0,0,0,0.05)'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      
-      // Update particles
-      particlesRef.current = particlesRef.current.filter(p => {
-        p.update()
-        p.draw(ctx)
-        return p.life > 0
-      })
-      
-      // Update audio data if analyzer exists
-      if (analyserRef.current && dataArrayRef.current) {
-        analyserRef.current.getByteFrequencyData(dataArrayRef.current)
-        const data = dataArrayRef.current
+      // Animation loop
+      const animate = () => {
+        // Fade effect for trails
+        ctx.fillStyle = 'rgba(0,0,0,0.05)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
         
-        // Calculate frequency bands
-        const bass = data.slice(0, 8).reduce((a, b) => a + b, 0) / (8 * 255)
-        const mid = data.slice(8, 16).reduce((a, b) => a + b, 0) / (8 * 255)
-        const high = data.slice(16, 24).reduce((a, b) => a + b, 0) / (8 * 255)
+        // Update particles
+        particlesRef.current = particlesRef.current.filter(p => {
+          p.update()
+          p.draw(ctx)
+          return p.life > 0
+        })
         
-        setAudioData({ bass, mid, high })
+        // Update audio data if analyzer exists
+        if (analyserRef.current && dataArrayRef.current) {
+          analyserRef.current.getByteFrequencyData(dataArrayRef.current)
+          const data = dataArrayRef.current
+          
+          // Calculate frequency bands
+          const bass = data.slice(0, 8).reduce((a, b) => a + b, 0) / (8 * 255)
+          const mid = data.slice(8, 16).reduce((a, b) => a + b, 0) / (8 * 255)
+          const high = data.slice(16, 24).reduce((a, b) => a + b, 0) / (8 * 255)
+          
+          setAudioData({ bass, mid, high })
+        }
+        
+        if (timelinePlayingRef.current) {
+          const now = performance.now()
+          if (lastTimelineTickRef.current == null) {
+            lastTimelineTickRef.current = now
+          }
+          const delta = (now - lastTimelineTickRef.current) / 1000
+          lastTimelineTickRef.current = now
+          setTimelineTime(prev => {
+            const length = Math.max(1, timelineLengthRef.current)
+            const next = prev + delta
+            return next >= length ? next % length : next
+          })
+        } else {
+          lastTimelineTickRef.current = null
+        }
+
+        animationRef.current = requestAnimationFrame(animate)
       }
-      
-      animationRef.current = requestAnimationFrame(animate)
-    }
     animate()
     
     return () => {
@@ -166,6 +224,55 @@ export default function TouchVJ() {
       setVideoLayers(prev => [...prev, newLayer])
     })
   }
+
+  const getActiveClip = (layerId) => {
+    return timelineClips.find(clip => 
+      clip.layerId === layerId &&
+      timelineTime >= clip.start &&
+      timelineTime < clip.end
+    )
+  }
+
+  const addTimelineClip = (blendMode, animatorFx = null) => {
+    if (!selectedLayer) {
+      alert('Sélectionnez un calque pour ajouter un clip Dreamflow.')
+      return
+    }
+    const length = Math.max(1, timelineLength)
+    const start = Math.min(timelineTime, length - 0.5)
+    const end = Math.min(length, start + clipDuration)
+    const newClip = {
+      id: `${Date.now()}-${Math.random()}`,
+      layerId: selectedLayer,
+      start,
+      end,
+      blendMode,
+      animatorFx
+    }
+    setTimelineClips(prev => [...prev, newClip])
+  }
+
+  const removeTimelineClip = (clipId) => {
+    setTimelineClips(prev => prev.filter(clip => clip.id !== clipId))
+  }
+
+  const handleTimelineSeek = (value) => {
+    const numeric = typeof value === 'number' ? value : parseFloat(value)
+    if (Number.isNaN(numeric)) return
+    const clamped = Math.max(0, Math.min(timelineLength, numeric))
+    setTimelineTime(clamped)
+  }
+
+  const toggleTimelinePlayback = () => {
+    setTimelinePlaying(prev => !prev)
+  }
+
+  const resetTimelineTime = () => {
+    setTimelinePlaying(false)
+    setTimelineTime(0)
+  }
+  
+  const formatSeconds = (seconds) => seconds.toFixed(1)
   
   // Update video layer
   const updateLayer = (id, updates) => {
@@ -453,50 +560,59 @@ export default function TouchVJ() {
     }
   }
   
+  const safeTimelineLength = Math.max(1, timelineLength)
+  
   return (
     <div className="touch-vj">
-      {/* Video Layers */}
-      <div className="video-layers">
-        {videoLayers.map(layer => {
-          const audioScale = layer.audioReactive.scale ? (1 + audioData.bass * 0.5) : 1
-          const audioOpacity = layer.audioReactive.opacity ? audioData.high : layer.opacity
+        {/* Video Layers */}
+        <div className="video-layers">
+          {videoLayers.map(layer => {
+            const audioScale = layer.audioReactive.scale ? (1 + audioData.bass * 0.5) : 1
+            const audioOpacity = layer.audioReactive.opacity ? audioData.high : layer.opacity
+            
+            const activeClip = getActiveClip(layer.id)
+            const activeBlendMode = activeClip?.blendMode || layer.blendMode
+            const animatorFilter = activeClip?.animatorFx && ANIMATOR_FX_PRESETS[activeClip.animatorFx]
+              ? ANIMATOR_FX_PRESETS[activeClip.animatorFx](audioData)
+              : ''
+            
+            // XY Pad FX
+            const hue = xyPadActive ? getFXValue(xyPadFX.xEffect === 'hue' ? 'hue' : xyPadFX.yEffect === 'hue' ? 'hue' : null, 
+                                                  xyPadFX.xEffect === 'hue' ? xyPadFX.x : xyPadFX.yEffect === 'hue' ? xyPadFX.y : 0) : 0
+            const blur = xyPadActive ? getFXValue(xyPadFX.xEffect === 'blur' ? 'blur' : xyPadFX.yEffect === 'blur' ? 'blur' : null,
+                                                  xyPadFX.xEffect === 'blur' ? xyPadFX.x : xyPadFX.yEffect === 'blur' ? xyPadFX.y : 0) : 0
+            const brightness = xyPadActive ? getFXValue(xyPadFX.xEffect === 'brightness' ? 'brightness' : xyPadFX.yEffect === 'brightness' ? 'brightness' : null,
+                                                         xyPadFX.xEffect === 'brightness' ? xyPadFX.x : xyPadFX.yEffect === 'brightness' ? xyPadFX.y : 0.5) : 100
+            const contrast = xyPadActive ? getFXValue(xyPadFX.xEffect === 'contrast' ? 'contrast' : xyPadFX.yEffect === 'contrast' ? 'contrast' : null,
+                                                       xyPadFX.xEffect === 'contrast' ? xyPadFX.x : xyPadFX.yEffect === 'contrast' ? xyPadFX.y : 0.5) : 100
+            const saturate = xyPadActive ? getFXValue(xyPadFX.xEffect === 'saturate' ? 'saturate' : xyPadFX.yEffect === 'saturate' ? 'saturate' : null,
+                                                       xyPadFX.xEffect === 'saturate' ? xyPadFX.x : xyPadFX.yEffect === 'saturate' ? xyPadFX.y : 0.5) : 100
+            
+            const filterString = `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg)`
+            const combinedFilter = animatorFilter ? `${filterString} ${animatorFilter}` : filterString
           
-          // XY Pad FX
-          const hue = xyPadActive ? getFXValue(xyPadFX.xEffect === 'hue' ? 'hue' : xyPadFX.yEffect === 'hue' ? 'hue' : null, 
-                                                xyPadFX.xEffect === 'hue' ? xyPadFX.x : xyPadFX.yEffect === 'hue' ? xyPadFX.y : 0) : 0
-          const blur = xyPadActive ? getFXValue(xyPadFX.xEffect === 'blur' ? 'blur' : xyPadFX.yEffect === 'blur' ? 'blur' : null,
-                                                xyPadFX.xEffect === 'blur' ? xyPadFX.x : xyPadFX.yEffect === 'blur' ? xyPadFX.y : 0) : 0
-          const brightness = xyPadActive ? getFXValue(xyPadFX.xEffect === 'brightness' ? 'brightness' : xyPadFX.yEffect === 'brightness' ? 'brightness' : null,
-                                                       xyPadFX.xEffect === 'brightness' ? xyPadFX.x : xyPadFX.yEffect === 'brightness' ? xyPadFX.y : 0.5) : 100
-          const contrast = xyPadActive ? getFXValue(xyPadFX.xEffect === 'contrast' ? 'contrast' : xyPadFX.yEffect === 'contrast' ? 'contrast' : null,
-                                                     xyPadFX.xEffect === 'contrast' ? xyPadFX.x : xyPadFX.yEffect === 'contrast' ? xyPadFX.y : 0.5) : 100
-          const saturate = xyPadActive ? getFXValue(xyPadFX.xEffect === 'saturate' ? 'saturate' : xyPadFX.yEffect === 'saturate' ? 'saturate' : null,
-                                                     xyPadFX.xEffect === 'saturate' ? xyPadFX.x : xyPadFX.yEffect === 'saturate' ? xyPadFX.y : 0.5) : 100
-          
-          const filterString = `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg)`
-          
-          return (
-            <video
-              key={layer.id}
-              ref={el => videoRefs.current[layer.id] = el}
-              src={layer.url}
-              autoPlay
-              loop
-              muted
-              className={`video-layer ${selectedLayer === layer.id ? 'selected' : ''}`}
-              style={{
-                left: layer.x + 'px',
-                top: layer.y + 'px',
-                transform: `translate(-50%, -50%) scale(${layer.scale * audioScale})`,
-                opacity: audioOpacity,
-                mixBlendMode: layer.blendMode,
-                filter: filterString
-              }}
-              onLoadedData={(e) => e.target.play()}
-            />
-          )
-        })}
-      </div>
+            return (
+              <video
+                key={layer.id}
+                ref={el => videoRefs.current[layer.id] = el}
+                src={layer.url}
+                autoPlay
+                loop
+                muted
+                className={`video-layer ${selectedLayer === layer.id ? 'selected' : ''}`}
+                style={{
+                  left: layer.x + 'px',
+                  top: layer.y + 'px',
+                  transform: `translate(-50%, -50%) scale(${layer.scale * audioScale})`,
+                  opacity: audioOpacity,
+                  mixBlendMode: activeBlendMode,
+                  filter: combinedFilter
+                }}
+                onLoadedData={(e) => e.target.play()}
+              />
+            )
+          })}
+        </div>
       
       {/* Canvas for touch effects */}
       <canvas
@@ -690,6 +806,101 @@ export default function TouchVJ() {
         </div>
       )}
       
+        {/* Dreamflow Timeline */}
+        <div className={`dreamflow-panel ${uiVisible ? 'visible' : 'hidden'}`}>
+          <div className="timeline-header">
+            <button onClick={toggleTimelinePlayback}>
+              {timelinePlaying ? '⏸️' : '▶️'}
+            </button>
+            <button onClick={resetTimelineTime}>⏮️</button>
+            <span className="timeline-time">
+              {formatSeconds(timelineTime)}s / {safeTimelineLength}s
+            </span>
+            <input
+              type="range"
+              min="0"
+              max={safeTimelineLength}
+              step="0.1"
+              value={timelineTime}
+              onChange={(e) => handleTimelineSeek(e.target.value)}
+            />
+            <label>
+              Durée
+              <select value={timelineLength} onChange={(e) => setTimelineLength(Number(e.target.value))}>
+                {[30, 45, 60, 90, 120].map(len => (
+                  <option key={len} value={len}>{len}s</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Clip
+              <select value={clipDuration} onChange={(e) => setClipDuration(Number(e.target.value))}>
+                {[2, 4, 6, 8, 12].map(len => (
+                  <option key={len} value={len}>{len}s</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          
+          <div className="timeline-layers">
+            {videoLayers.length === 0 ? (
+              <div className="timeline-empty">Ajoutez un calque pour séquencer vos blends.</div>
+            ) : (
+              videoLayers.map(layer => {
+                const layerClips = timelineClips.filter(clip => clip.layerId === layer.id)
+                return (
+                  <div key={layer.id} className="timeline-row">
+                    <span className="timeline-layer-name">{layer.name}</span>
+                    <div className="timeline-track">
+                      {layerClips.map(clip => {
+                        const startPercent = (clip.start / safeTimelineLength) * 100
+                        const widthPercent = ((clip.end - clip.start) / safeTimelineLength) * 100
+                        return (
+                          <div
+                            key={clip.id}
+                            className={`timeline-clip ${clip.animatorFx ? 'fx' : ''}`}
+                            style={{ left: `${startPercent}%`, width: `${widthPercent}%` }}
+                            title={`${clip.blendMode}${clip.animatorFx ? ` · ${clip.animatorFx}` : ''} (${formatSeconds(clip.start)}s → ${formatSeconds(clip.end)}s)`}
+                            onDoubleClick={() => removeTimelineClip(clip.id)}
+                          >
+                            <span>{clip.animatorFx || clip.blendMode}</span>
+                          </div>
+                        )
+                      })}
+                      <div
+                        className="timeline-cursor"
+                        style={{ left: `${(timelineTime / safeTimelineLength) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </div>
+          
+          {selectedLayer && (
+            <div className="timeline-actions">
+              <div className="clip-tools">
+                <span>Blend Modes</span>
+                {['screen', 'overlay', 'multiply', 'difference', 'soft-light'].map(mode => (
+                  <button key={mode} onClick={() => addTimelineClip(mode)}>
+                    {mode}
+                  </button>
+                ))}
+              </div>
+              <div className="clip-tools">
+                <span>Dream Macros</span>
+                {Object.keys(ANIMATOR_FX_PRESETS).map(name => (
+                  <button key={name} onClick={() => addTimelineClip('screen', name)}>
+                    {name}
+                  </button>
+                ))}
+              </div>
+              <small>💡 Double-cliquez sur un clip pour le supprimer.</small>
+            </div>
+          )}
+        </div>
+        
       {/* Audio Viz */}
       <div className={`audio-viz ${uiVisible ? 'visible' : 'hidden'}`}>
         <div className="bar" style={{ width: `${audioData.bass * 100}%` }}>🔊</div>
