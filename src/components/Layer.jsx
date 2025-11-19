@@ -140,6 +140,7 @@ function Layer({ layer }) {
               <video
                 ref={mediaRef}
                 src={layer.url}
+                data-layer-id={layer.id}
                 autoPlay
                 loop
                 muted
@@ -155,6 +156,7 @@ function Layer({ layer }) {
         return (
           <video
             src={layer.url}
+            data-layer-id={layer.id}
             autoPlay
             loop
             muted
@@ -165,7 +167,7 @@ function Layer({ layer }) {
       case 'audio':
         return (
           <div className="audio-visualizer">
-            <audio src={layer.url} autoPlay loop />
+            <audio src={layer.url} data-layer-id={layer.id} autoPlay loop />
             <div className="audio-icon">🎵</div>
             <div className="audio-name">{layer.name}</div>
           </div>

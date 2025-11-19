@@ -1,18 +1,15 @@
 import React, { useRef, useState } from 'react'
 import Layer from './Layer'
-import TouchInteraction from './TouchInteraction'
-import VideoCapture from './VideoCapture'
-import SmartFloatingPanel from './SmartFloatingPanel'
 import TouchVJPad from './TouchVJPad'
+import VideoCapture from './VideoCapture'
+import PlayerControls from './PlayerControls'
 import './Viewer.css'
 
 function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer, selectedLayer }) {
   const viewerRef = useRef(null)
   const [backdrop, setBackdrop] = useState('black')
-  const [isPerformanceMode, setIsPerformanceMode] = useState(false)
   const [isTouchVJMode, setIsTouchVJMode] = useState(false)
   const [showVideoCapture, setShowVideoCapture] = useState(false)
-  const [showLayerProps, setShowLayerProps] = useState(false)
 
   const getCanvasStyle = () => {
     switch(backdrop) {
@@ -37,7 +34,7 @@ function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer, selectedLayer
     }
   }
 
-  // If Touch VJ Mode, show simplified view
+  // Touch VJ Mode - Fullscreen immersive
   if (isTouchVJMode) {
     return (
       <div className="viewer touch-vj-viewer" ref={viewerRef}>
@@ -67,27 +64,54 @@ function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer, selectedLayer
     )
   }
 
+  // Normal Mode - Player avec contrôles
   return (
     <div className="viewer" ref={viewerRef}>
       <div className="viewer-header">
-        <h2>{isPerformanceMode ? '🎭 Mode Performance VJ' : '🎨 Aperçu du Rêve'}</h2>
+        <h2>🎨 Player</h2>
         <div className="viewer-controls">
+          {/* Backdrop selector */}
+          <div className="backdrop-buttons">
+            <button
+              className={`backdrop-btn ${backdrop === 'black' ? 'active' : ''}`}
+              onClick={() => setBackdrop('black')}
+              title="Fond noir"
+            >
+              ⬛
+            </button>
+            <button
+              className={`backdrop-btn ${backdrop === 'white' ? 'active' : ''}`}
+              onClick={() => setBackdrop('white')}
+              title="Fond blanc"
+            >
+              ⬜
+            </button>
+            <button
+              className={`backdrop-btn ${backdrop === 'transparent' ? 'active' : ''}`}
+              onClick={() => setBackdrop('transparent')}
+              title="Transparent"
+            >
+              🔲
+            </button>
+            <button
+              className={`backdrop-btn ${backdrop === 'gradient' ? 'active' : ''}`}
+              onClick={() => setBackdrop('gradient')}
+              title="Gradient"
+            >
+              🌈
+            </button>
+          </div>
+
+          {/* Touch VJ Mode toggle */}
           <button 
-            className={`performance-toggle ${isTouchVJMode ? 'active' : ''}`}
-            onClick={() => setIsTouchVJMode(!isTouchVJMode)}
+            className="performance-toggle"
+            onClick={() => setIsTouchVJMode(true)}
             title="Touch VJ Mode - Contrôle tactile temps réel"
           >
-            {isTouchVJMode ? '👆 Touch VJ ON' : '👆 Touch VJ'}
-          </button>
-          
-          <button 
-            className={`performance-toggle ${isPerformanceMode ? 'active' : ''}`}
-            onClick={() => setIsPerformanceMode(!isPerformanceMode)}
-            title={isPerformanceMode ? 'Quitter le mode Performance' : 'Activer le mode Performance'}
-          >
-            {isPerformanceMode ? '🎭 VJ Mode ON' : '🎬 VJ Mode OFF'}
+            👆 Touch VJ
           </button>
 
+          {/* Video Capture toggle */}
           <button 
             className={`video-capture-toggle ${showVideoCapture ? 'active' : ''}`}
             onClick={() => setShowVideoCapture(!showVideoCapture)}
@@ -95,251 +119,58 @@ function Viewer({ layers, audioData, audioAnalyzer, onUpdateLayer, selectedLayer
           >
             🎥 Loop Recorder
           </button>
-          
-          {isPerformanceMode && (
+
+          {/* Audio visualization */}
+          {audioData && (
             <div className="audio-level-display">
               <div className="level-bar">
                 <span>🔊</span>
-                <div className="bar" style={{ width: `${audioData.bass * 100}%`, background: '#ff3366' }}></div>
+                <div className="bar" style={{ height: `${audioData.bass * 100}%` }} />
               </div>
               <div className="level-bar">
                 <span>🎸</span>
-                <div className="bar" style={{ width: `${audioData.mid * 100}%`, background: '#33ff88' }}></div>
+                <div className="bar" style={{ height: `${audioData.mid * 100}%` }} />
               </div>
               <div className="level-bar">
                 <span>🎹</span>
-                <div className="bar" style={{ width: `${audioData.high * 100}%`, background: '#3366ff' }}></div>
+                <div className="bar" style={{ height: `${audioData.high * 100}%` }} />
               </div>
             </div>
           )}
-          
-          <div className="viewer-info">
-            {layers.length} calque{layers.length !== 1 ? 's' : ''}
-          </div>
-          <div className="backdrop-buttons">
-            <button 
-              className={`backdrop-btn ${backdrop === 'black' ? 'active' : ''}`}
-              onClick={() => setBackdrop('black')}
-              title="Fond noir"
-            >
-              ⚫
-            </button>
-            <button 
-              className={`backdrop-btn ${backdrop === 'white' ? 'active' : ''}`}
-              onClick={() => setBackdrop('white')}
-              title="Fond blanc"
-            >
-              ⚪
-            </button>
-            <button 
-              className={`backdrop-btn ${backdrop === 'transparent' ? 'active' : ''}`}
-              onClick={() => setBackdrop('transparent')}
-              title="Grille de transparence"
-            >
-              🔲
-            </button>
-            <button 
-              className={`backdrop-btn ${backdrop === 'gradient' ? 'active' : ''}`}
-              onClick={() => setBackdrop('gradient')}
-              title="Dégradé"
-            >
-              🌈
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="canvas-container">
-        <div className={`canvas ${isPerformanceMode ? 'performance-active' : ''}`} style={getCanvasStyle()}>
-          {layers.map((layer) => (
-            layer.visible && (
-              isPerformanceMode ? (
-                <TouchInteraction
-                  key={layer.id}
-                  layer={layer}
-                  audioData={audioData}
-                  onUpdateLayer={onUpdateLayer}
-                  isPerformanceMode={isPerformanceMode}
-                >
-                  <Layer 
-                    layer={layer}
-                    audioData={audioData}
-                  />
-                </TouchInteraction>
-              ) : (
-                <Layer 
-                  key={layer.id} 
-                  layer={layer}
-                  audioData={audioData}
-                />
-              )
-            )
-          ))}
-          {layers.length === 0 && (
-            <div className="empty-canvas">
-              <div className="empty-icon">✨</div>
-              <p>Votre rêve multimédia apparaîtra ici</p>
-              <p className="empty-hint">Ajoutez des calques pour commencer</p>
-            </div>
-          )}
-          
-          {isPerformanceMode && layers.length > 0 && (
-            <div className="performance-hints">
-              <p>🖱️ Glisser pour déplacer</p>
-              <p>🔄 Scroll pour zoomer</p>
-              <p>⇧ Shift+Scroll pour rotation</p>
-              <p>⌃ Ctrl+Scroll pour blur</p>
-              <p>👆 2 doigts: pinch & rotate</p>
-            </div>
-          )}
         </div>
       </div>
 
+      {/* Main canvas */}
+      <div className="canvas" style={getCanvasStyle()} ref={viewerRef}>
+        {layers.length === 0 ? (
+          <div className="empty-canvas">
+            <p className="empty-icon">🎨</p>
+            <p className="empty-text">Aucun calque</p>
+            <p className="empty-hint">Ajoutez des médias pour commencer</p>
+          </div>
+        ) : (
+          layers.map((layer) => (
+            layer.visible && (
+              <Layer 
+                key={layer.id} 
+                layer={layer}
+                audioData={audioData}
+              />
+            )
+          ))
+        )}
+      </div>
+
+      {/* Player Controls */}
+      <PlayerControls 
+        layers={layers}
+        onUpdateLayer={onUpdateLayer}
+      />
+
+      {/* Video Capture */}
       {showVideoCapture && (
         <VideoCapture canvasRef={viewerRef} />
       )}
-
-      {selectedLayer && showLayerProps && (
-        <SmartFloatingPanel
-          title={`⚙️ ${selectedLayer.name}`}
-          defaultPosition="top-right"
-          defaultWidth={340}
-          onClose={() => setShowLayerProps(false)}
-        >
-          <LayerProperties 
-            layer={selectedLayer}
-            onUpdateLayer={onUpdateLayer}
-          />
-        </SmartFloatingPanel>
-      )}
-
-      {/* Floating button to open props */}
-      {isPerformanceMode && selectedLayer && !showLayerProps && (
-        <button 
-          className="floating-props-trigger"
-          onClick={() => setShowLayerProps(true)}
-          title="Ouvrir les propriétés"
-        >
-          ⚙️
-        </button>
-      )}
-    </div>
-  )
-}
-
-// Extract layer properties into separate component
-function LayerProperties({ layer, onUpdateLayer }) {
-  return (
-    <div className="floating-layer-properties">
-      <div className="property-section">
-        <h4>Transformation</h4>
-        
-        <label>
-          <span>Opacité</span>
-          <input 
-            type="range" 
-            min="0" 
-            max="1" 
-            step="0.01"
-            value={layer.opacity}
-            onChange={(e) => onUpdateLayer(layer.id, { opacity: parseFloat(e.target.value) })}
-          />
-          <span className="value">{(layer.opacity * 100).toFixed(0)}%</span>
-        </label>
-
-        <label>
-          <span>Échelle</span>
-          <input 
-            type="range" 
-            min="0.1" 
-            max="3" 
-            step="0.1"
-            value={layer.scale}
-            onChange={(e) => onUpdateLayer(layer.id, { scale: parseFloat(e.target.value) })}
-          />
-          <span className="value">{layer.scale.toFixed(1)}x</span>
-        </label>
-
-        <label>
-          <span>Rotation</span>
-          <input 
-            type="range" 
-            min="0" 
-            max="360" 
-            step="1"
-            value={layer.rotation}
-            onChange={(e) => onUpdateLayer(layer.id, { rotation: parseInt(e.target.value) })}
-          />
-          <span className="value">{layer.rotation}°</span>
-        </label>
-      </div>
-
-      <div className="property-section">
-        <h4>Fusion</h4>
-        <select 
-          value={layer.blendMode}
-          onChange={(e) => onUpdateLayer(layer.id, { blendMode: e.target.value })}
-        >
-          <option value="normal">Normal</option>
-          <option value="multiply">Multiply</option>
-          <option value="screen">Screen</option>
-          <option value="overlay">Overlay</option>
-          <option value="darken">Darken</option>
-          <option value="lighten">Lighten</option>
-          <option value="color-dodge">Color Dodge</option>
-          <option value="color-burn">Color Burn</option>
-          <option value="hard-light">Hard Light</option>
-          <option value="soft-light">Soft Light</option>
-        </select>
-      </div>
-
-      <div className="property-section">
-        <h4>Filtres</h4>
-        
-        <label>
-          <span>Blur</span>
-          <input 
-            type="range" 
-            min="0" 
-            max="20" 
-            step="0.5"
-            value={layer.filters.blur}
-            onChange={(e) => onUpdateLayer(layer.id, {
-              filters: { ...layer.filters, blur: parseFloat(e.target.value) }
-            })}
-          />
-          <span className="value">{layer.filters.blur.toFixed(1)}px</span>
-        </label>
-
-        <label>
-          <span>Luminosité</span>
-          <input 
-            type="range" 
-            min="0" 
-            max="200" 
-            step="1"
-            value={layer.filters.brightness}
-            onChange={(e) => onUpdateLayer(layer.id, {
-              filters: { ...layer.filters, brightness: parseInt(e.target.value) }
-            })}
-          />
-          <span className="value">{layer.filters.brightness}%</span>
-        </label>
-
-        <label>
-          <span>Contraste</span>
-          <input 
-            type="range" 
-            min="0" 
-            max="200" 
-            step="1"
-            value={layer.filters.contrast}
-            onChange={(e) => onUpdateLayer(layer.id, {
-              filters: { ...layer.filters, contrast: parseInt(e.target.value) }
-            })}
-          />
-          <span className="value">{layer.filters.contrast}%</span>
-        </label>
-      </div>
     </div>
   )
 }
