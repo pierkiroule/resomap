@@ -26,7 +26,7 @@ const emojiSoundMap = Object.entries(emojiCatalog).reduce((acc, [category, list]
 
 const order = ['dissonance', 'profondeur', 'mojonance'];
 
-const AudioSampler = ({ emojis }) => {
+const AudioSampler = ({ emojis, experienceId }) => {
   const audioRefs = useRef([]);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -44,7 +44,7 @@ const AudioSampler = ({ emojis }) => {
         };
       })
       .filter(Boolean);
-  }, [emojis]);
+  }, [emojis, experienceId]);
 
   useEffect(() => {
     audioRefs.current.forEach((audio) => audio?.pause());

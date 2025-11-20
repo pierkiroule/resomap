@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { generateHaiku } from '../components/HaikuGenerator.jsx';
 
 const STORAGE_KEY = 'resomap_flow';
 
@@ -21,6 +22,7 @@ const safeParse = (value) => {
 export const FlowProvider = ({ children }) => {
   const [selections, setSelections] = useState(() => createEmptySelections());
   const [haiku, setHaiku] = useState(null);
+  const [experienceId, setExperienceId] = useState(() => Date.now());
   const isHydrated = useRef(false);
 
   useEffect(() => {
@@ -36,14 +38,17 @@ export const FlowProvider = ({ children }) => {
     if (payload?.haiku) {
       setHaiku(payload.haiku);
     }
+    if (payload?.experienceId) {
+      setExperienceId(payload.experienceId);
+    }
     isHydrated.current = true;
   }, []);
 
   useEffect(() => {
     if (!isHydrated.current || typeof window === 'undefined') return;
-    const data = JSON.stringify({ selections, haiku });
+    const data = JSON.stringify({ selections, haiku, experienceId });
     sessionStorage.setItem(STORAGE_KEY, data);
-  }, [selections, haiku]);
+  }, [experienceId, haiku, selections]);
 
   const updateSelection = useCallback((category, emoji) => {
     if (!category) return;
@@ -53,9 +58,17 @@ export const FlowProvider = ({ children }) => {
     }));
   }, []);
 
+  const refreshExperience = useCallback(() => {
+    const nextHaiku = generateHaiku();
+    setHaiku(nextHaiku);
+    setExperienceId(Date.now());
+    return nextHaiku;
+  }, []);
+
   const resetFlow = useCallback(() => {
     setSelections(createEmptySelections());
     setHaiku(null);
+    setExperienceId(Date.now());
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem(STORAGE_KEY);
     }
@@ -66,11 +79,12 @@ export const FlowProvider = ({ children }) => {
       selections,
       haiku,
       updateSelection,
-      setHaiku,
+      refreshExperience,
       resetFlow,
+      experienceId,
       hasCompleteSelection: Object.values(selections || {}).every(Boolean),
     }),
-    [haiku, resetFlow, selections, updateSelection]
+    [experienceId, haiku, refreshExperience, resetFlow, selections, updateSelection]
   );
 
   return <FlowContext.Provider value={value}>{children}</FlowContext.Provider>;

@@ -6,7 +6,7 @@ import { useFlow } from '../context/FlowContext.jsx';
 
 const Cosmoji = () => {
   const navigate = useNavigate();
-  const { selections, haiku, hasCompleteSelection, resetFlow } = useFlow();
+  const { selections, haiku, hasCompleteSelection, resetFlow, refreshExperience } = useFlow();
 
   useEffect(() => {
     if (!hasCompleteSelection) {
@@ -18,9 +18,17 @@ const Cosmoji = () => {
 
   if (!hasCompleteSelection || !haiku) return null;
 
+  const handleReplay = () => {
+    refreshExperience();
+    navigate('/haiku');
+  };
+
   const footer = (
     <>
-      <Link className="primary-btn" to="/" onClick={resetFlow}>
+      <button type="button" className="primary-btn" onClick={handleReplay}>
+        Rejouer
+      </button>
+      <Link className="secondary-btn" to="/" onClick={resetFlow}>
         Recommencer
       </Link>
     </>
