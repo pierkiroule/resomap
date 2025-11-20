@@ -1,9 +1,4 @@
-Voici le README complet, clair, minimal, prêt pour GitHub ou Cursor.
-Version simple, directe, phrases courtes.
-Ton app s’appelle Haïmoji•° (version minimale, sans IA, sans backend).
 
-
----
 
 📘 README — Haïmoji•° (version minimale)
 
