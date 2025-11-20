@@ -431,6 +431,24 @@ body {
   backdrop-filter: blur(10px);
 }
 
+.panel-close-btn {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.panel-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
 .xy-pad-header select {
   padding: 4px 8px;
   background: rgba(255, 255, 255, 0.1);
@@ -521,6 +539,42 @@ body {
 
 .layer-controls select {
   min-width: 120px;
+}
+
+/* Floating menu toggles */
+.menu-toggle-buttons {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 150;
+}
+
+.menu-toggle-buttons .toggle-btn {
+  min-width: 180px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.78);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.menu-toggle-buttons .toggle-btn:hover {
+  transform: translateY(-2px);
+}
+
+.menu-toggle-buttons .toggle-btn[aria-pressed="true"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
 }
 
 /* Mobile */
@@ -619,19 +673,31 @@ body {
     font-size: 0.75rem;
   }
   
-  .layer-controls {
-    flex-wrap: wrap;
-    padding: 8px;
-    gap: 6px;
-  }
-  
-  .layer-controls button,
-  .layer-controls select {
-    padding: 6px 10px;
-    font-size: 0.9rem;
-  }
-  
-  .video-layer {
-    width: 300px;
-  }
+    .layer-controls {
+      flex-wrap: wrap;
+      padding: 8px;
+      gap: 6px;
+    }
+    
+    .layer-controls button,
+    .layer-controls select {
+      padding: 6px 10px;
+      font-size: 0.9rem;
+    }
+
+    .menu-toggle-buttons {
+      left: 12px;
+      bottom: 12px;
+      gap: 8px;
+    }
+    
+    .menu-toggle-buttons .toggle-btn {
+      min-width: 0;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+    }
+    
+    .video-layer {
+      width: 300px;
+    }
 }

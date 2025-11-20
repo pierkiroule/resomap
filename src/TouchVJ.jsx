@@ -65,18 +65,18 @@ export default function TouchVJ() {
     setTimelineTime(prev => Math.min(prev, timelineLength))
   }, [timelineLength])
   
-  // Recording
-  const mediaRecorderRef = useRef(null)
-  const recordedChunksRef = useRef([])
-  const recordingStreamRef = useRef(null)
-  const autoStopTimeoutRef = useRef(null)
-  const [isRecording, setIsRecording] = useState(false)
-  const [recordingTime, setRecordingTime] = useState(0)
-  const recordingTimerRef = useRef(null)
-  
-  // UI visibility
-  const [uiVisible, setUiVisible] = useState(true)
-  const uiTimeoutRef = useRef(null)
+    // Recording
+    const mediaRecorderRef = useRef(null)
+    const recordedChunksRef = useRef([])
+    const recordingStreamRef = useRef(null)
+    const autoStopTimeoutRef = useRef(null)
+    const [isRecording, setIsRecording] = useState(false)
+    const [recordingTime, setRecordingTime] = useState(0)
+    const recordingTimerRef = useRef(null)
+    
+    // UI panels state
+    const [toolbarOpen, setToolbarOpen] = useState(true)
+    const [panelsOpen, setPanelsOpen] = useState(true)
   
   // XY Pad FX
   const [xyPadActive, setXyPadActive] = useState(false)
@@ -86,27 +86,6 @@ export default function TouchVJ() {
     xEffect: 'hue', // hue, blur, brightness, contrast, saturate
     yEffect: 'blur' // hue, blur, brightness, contrast, saturate
   })
-  
-  // Auto-hide UI
-  useEffect(() => {
-    const resetUITimer = () => {
-      setUiVisible(true)
-      clearTimeout(uiTimeoutRef.current)
-      uiTimeoutRef.current = setTimeout(() => {
-        if (!isRecording) setUiVisible(false)
-      }, 3000)
-    }
-    
-    window.addEventListener('mousemove', resetUITimer)
-    window.addEventListener('touchstart', resetUITimer)
-    resetUITimer()
-    
-    return () => {
-      window.removeEventListener('mousemove', resetUITimer)
-      window.removeEventListener('touchstart', resetUITimer)
-      clearTimeout(uiTimeoutRef.current)
-    }
-  }, [isRecording])
   
   // Initialize canvas and audio
   useEffect(() => {
@@ -628,7 +607,7 @@ export default function TouchVJ() {
       />
       
       {/* Top UI */}
-      <div className={`ui ${uiVisible ? 'visible' : 'hidden'}`}>
+        <div className={`ui ${toolbarOpen ? 'visible' : 'hidden'}`}>
         <input
           type="file"
           id="audio-upload"
@@ -711,61 +690,69 @@ export default function TouchVJ() {
         <button className="clear" onClick={clear}>🗑️</button>
       </div>
       
-      {/* Recording Timer */}
-      {isRecording && (
-        <div className="recording-timer">
-          <div className="rec-dot" />
-          <span>REC {recordingTime}s / 30s</span>
-        </div>
-      )}
-      
-        {/* XY Pad Controller */}
-        {xyPadActive && (
-          <div className={`xy-pad-container ${uiVisible ? 'visible' : 'hidden'}`}>
-            <div className="xy-pad-header">
-              <select 
-                value={xyPadFX.xEffect}
-                onChange={(e) => setXyPadFX(prev => ({ ...prev, xEffect: e.target.value }))}
-              >
-                <option value="hue">Hue</option>
-                <option value="blur">Blur</option>
-                <option value="brightness">Brightness</option>
-                <option value="contrast">Contrast</option>
-                <option value="saturate">Saturate</option>
-              </select>
-              <span>X</span>
-              <span>Y</span>
-              <select 
-                value={xyPadFX.yEffect}
-                onChange={(e) => setXyPadFX(prev => ({ ...prev, yEffect: e.target.value }))}
-              >
-                <option value="blur">Blur</option>
-                <option value="hue">Hue</option>
-                <option value="brightness">Brightness</option>
-                <option value="contrast">Contrast</option>
-                <option value="saturate">Saturate</option>
-              </select>
-            </div>
-            <div 
-              className="xy-pad"
-              onMouseDown={handleXYPad}
-              onMouseMove={(e) => e.buttons === 1 && handleXYPad(e)}
-              onTouchStart={handleXYPad}
-              onTouchMove={handleXYPad}
-            >
-              <div 
-                className="xy-pad-cursor"
-                style={{
-                  left: `${xyPadFX.x * 100}%`,
-                  top: `${(1 - xyPadFX.y) * 100}%`
-                }}
-              />
-            </div>
+        {/* Recording Timer */}
+        {isRecording && (
+          <div className="recording-timer">
+            <div className="rec-dot" />
+            <span>REC {recordingTime}s / 30s</span>
           </div>
         )}
+        
+        {/* XY Pad Controller */}
+        <div 
+          className={`xy-pad-container ${xyPadActive ? 'visible' : 'hidden'}`}
+          aria-hidden={!xyPadActive}
+        >
+          <div className="xy-pad-header">
+            <select 
+              value={xyPadFX.xEffect}
+              onChange={(e) => setXyPadFX(prev => ({ ...prev, xEffect: e.target.value }))}
+            >
+              <option value="hue">Hue</option>
+              <option value="blur">Blur</option>
+              <option value="brightness">Brightness</option>
+              <option value="contrast">Contrast</option>
+              <option value="saturate">Saturate</option>
+            </select>
+            <span>X</span>
+            <span>Y</span>
+            <select 
+              value={xyPadFX.yEffect}
+              onChange={(e) => setXyPadFX(prev => ({ ...prev, yEffect: e.target.value }))}
+            >
+              <option value="blur">Blur</option>
+              <option value="hue">Hue</option>
+              <option value="brightness">Brightness</option>
+              <option value="contrast">Contrast</option>
+              <option value="saturate">Saturate</option>
+            </select>
+            <button 
+              className="panel-close-btn"
+              onClick={() => setXyPadActive(false)}
+              title="Fermer le pad FX"
+            >
+              ×
+            </button>
+          </div>
+          <div 
+            className="xy-pad"
+            onMouseDown={handleXYPad}
+            onMouseMove={(e) => e.buttons === 1 && handleXYPad(e)}
+            onTouchStart={handleXYPad}
+            onTouchMove={handleXYPad}
+          >
+            <div 
+              className="xy-pad-cursor"
+              style={{
+                left: `${xyPadFX.x * 100}%`,
+                top: `${(1 - xyPadFX.y) * 100}%`
+              }}
+            />
+          </div>
+        </div>
 
-        {/* Docked Panels */}
-        <div className={`panel-dock ${uiVisible ? 'visible' : 'hidden'}`}>
+          {/* Docked Panels */}
+          <div className={`panel-dock ${panelsOpen ? 'visible' : 'hidden'}`}>
           <div className="audio-viz">
             <div className="bar" style={{ width: `${audioData.bass * 100}%` }}>🔊</div>
             <div className="bar" style={{ width: `${audioData.mid * 100}%` }}>🎸</div>
@@ -909,6 +896,30 @@ export default function TouchVJ() {
               </button>
             </div>
           )}
+        </div>
+        
+        <div className="menu-toggle-buttons">
+          <button
+            className="toggle-btn"
+            aria-pressed={toolbarOpen}
+            onClick={() => setToolbarOpen(prev => !prev)}
+          >
+            {toolbarOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          </button>
+          <button
+            className="toggle-btn"
+            aria-pressed={panelsOpen}
+            onClick={() => setPanelsOpen(prev => !prev)}
+          >
+            {panelsOpen ? 'Fermer les panneaux' : 'Ouvrir les panneaux'}
+          </button>
+          <button
+            className="toggle-btn"
+            aria-pressed={xyPadActive}
+            onClick={() => setXyPadActive(prev => !prev)}
+          >
+            {xyPadActive ? 'Fermer le pad FX' : 'Ouvrir le pad FX'}
+          </button>
         </div>
     </div>
   )
