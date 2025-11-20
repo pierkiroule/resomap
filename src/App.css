@@ -1,5 +1,5 @@
 :root {
-  --bg: radial-gradient(circle at 20% 20%, #fdf2ff 0%, #e7f0ff 35%, #eef7ff 60%, #ffffff 100%);
+  --bg: #000;
   --card-bg: rgba(255, 255, 255, 0.85);
   --card-border: rgba(255, 255, 255, 0.4);
   --accent: #6c4ef6;
@@ -69,6 +69,7 @@ body {
   background: linear-gradient(120deg, rgba(255, 255, 255, 0.9), rgba(108, 78, 246, 0.45));
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
+  pointer-events: none;
 }
 
 .box h1 {
