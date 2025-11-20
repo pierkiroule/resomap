@@ -1,265 +1,34 @@
+# Haïmoji (version ado-adulte)
 
+Haïmoji est une mini webapp React + Vite pensée pour aider un ado ou un adulte à prendre un pas de recul sur un souci en choisissant trois émojis-guides. Tout se passe côté front, sans IA ni backend.
 
-📘 README — Haïmoji•° (version minimale)
+## But de l’app
+- proposer un rituel rapide autour de trois émojis pour identifier pensées, sensations physiques et futur mojo ;
+- garder l’expérience ultra simple, mobile-first, sans champ de texte ni compte ;
+- offrir un résumé lisible et un texte de soutien léger qui peut être relu à tout moment.
 
-Webapp React + Vite — générateur multimodal poétique basé sur 3 emojis.
+## Stack & choix techniques
+- React 18 + Vite, écriture en JavaScript.
+- Aucune dépendance UI lourde, uniquement quelques styles dans `src/App.css`.
+- Pas de persistance pour l’instant : l’état vit uniquement le temps de la session.
 
-
----
-
-🌟 Description
-
-Haïmoji•° est une webapp minimaliste.
-Tu choisis 3 émojis :
-
-1. dissonance (surface)
-
-
-2. profondeur (enjeu)
-
-
-3. mojonance (solution)
-
-
-
-L’app génère alors :
-
-un haïku texte (générateur local combinatoire)
-
-un triptyque d’images (3 images prédéfinies remplies aléatoirement)
-
-un mix audio basé sur 1 sample par emoji
-
-un mix vidéo VJ (3 clips en overlay)
-→ tout en client-side, sans IA ni backend.
-
-
-Version P0 = squelette fonctionnel + UI simple.
-
-
----
-
-🧩 Fonctionnalités (P0 sans IA)
-
-1. Sélection des émojis (3 étapes)
-
-Emoji 1 = dissonance
-
-Emoji 2 = profondeur
-
-Emoji 3 = mojonance
-
-
-2. Générateur A.I.ku local
-
-3 tableaux de lignes (début / pivot / sortie)
-
-1 haïku = ligne A + ligne B + ligne C
-
-64 000 combinaisons possibles
-
-Zéro IA
-
-
-3. Triptyque d’images
-
-Dossier /public/images/
-
-50 images abstraites
-
-3 tirées aléatoirement
-
-affichage en colonne ou grille
-
-
-4. Mix audio minimal
-
-Chaque emoji = 1 sample .mp3
-
-3 samples mixés en parallèle
-
-Volume léger
-
-Fade-in / fade-out
-
-WebAudio API
-
-
-5. Mix vidéo VJ léger
-
-Chaque emoji = 1 clip .mp4
-
-3 clips joués en overlay + blend mode CSS
-
-Légère pulsation
-
-
-6. Bouton “Rejouer / Régénérer”
-
-Recharge aléatoire du haïku
-
-Recharge du triptyque
-
-Recharge du mix audio
-
-Recharge du VJ mix
-
-
-
----
-
-🏗️ Architecture technique
-
-haimoji/
- ├─ public/
- │   ├─ images/        (50 images abstraites)
- │   ├─ audio/         (samples emoji)
- │   └─ video/         (clips VJ)
- ├─ src/
- │   ├─ components/
- │   │   ├─ EmojiPicker.jsx
- │   │   ├─ HaikuGenerator.jsx
- │   │   ├─ Triptych.jsx
- │   │   ├─ AudioMixer.jsx
- │   │   └─ VideoMixer.jsx
- │   ├─ data/
- │   │   ├─ haikuLinesA.js
- │   │   ├─ haikuLinesB.js
- │   │   └─ haikuLinesC.js
- │   ├─ App.jsx
- │   └─ main.jsx
- ├─ index.html
- ├─ package.json
- └─ vite.config.js
-
-
----
-
-🛠️ Installation
-
+## Lancer le projet
+```bash
 npm install
 npm run dev
-
-
----
-
-🚀 Usage
-
-1. Ouvre l’app.
-
-
-2. Choisis ton émoji de dissonance.
-
-
-3. Choisis ton émoji profondeur.
-
-
-4. Choisis ton émoji mojonance.
-
-
-5. L’app génère automatiquement :
-
-haïku
-
-triptyque visuel
-
-mix audio
-
-mix VJ vidéo
-
-
-
-6. Clique “Rejouer” pour une nouvelle version.
-
-
-
-
----
-
-🎨 Design minimal
-
-fond neutre
-
-emojis très lisibles
-
-transitions légères
-
-sans fioritures
-
-responsive mobile-first
-
-
-
----
-
-📦 Roadmap P0 (livrable minimal)
-
-[ ] UI 3 écrans d’emoji
-
-[ ] générateur haïku local
-
-[ ] triptyque images
-
-[ ] mix audio 3 samples
-
-[ ] mix vidéo 3 overlays
-
-[ ] bouton replay
-
-[ ] mode plein écran
-
-[ ] dépôt sur GitHub
-
-
-
----
-
-📦 Roadmap P1 (après P0)
-
-[ ] système Cosmoji (version statique)
-
-[ ] transition narrative entre les 3 niveaux
-
-[ ] presets émotionnels
-
-[ ] animations CSS plus douces
-
-[ ] sauvegarde locale (localStorage)
-
-
-
----
-
-🌌 Vision (future Premium)
-
-Boost InspirIA (1/jour)
-
-Cosmoji vivant
-
-triptyques IA
-
-haïkus IA
-
-vidéos 3 minutes
-
-constellation personnelle
-
-identité MojoMaster
-
-
-
----
-
-📄 Licence
-
-Libre pour usage personnel.
-Commercialisation réservée au projet Haïmoji•°.
-
-
----
-
-Si tu veux, je peux te donner :
-👉 la version “README PRO” pour GitHub (plus formelle)
-👉 les fichiers haikuLinesA/B/C.js
-👉 les noms de dossiers exacts
-👉 le App.jsx minimal pour démarrer.
+```
+Ensuite, ouvre l’URL fournie par Vite (généralement http://localhost:5173) sur ton navigateur mobile ou desktop.
+
+## Déroulé des étapes Haïmoji
+1. **Étape 0 – Accueil**  
+   Présentation rapide, phrase-mantra « Un émoji comme un rayon de soleil dans ton nuage de problème » et bouton « Commencer ».
+2. **Étape 1 – Émoji des pensées**  
+   Une grille de 15 émojis adaptés aux pensées/bad mood. Choisir ton mental du moment débloque « Suivant ».
+3. **Étape 2 – Émoji du corps**  
+   Même UI, mais orientée sensations physiques (tension, chaleur, fatigue, etc.). L’émoji choisi valide l’étape.
+4. **Étape 3 – Émoji du futur mojo**  
+   On imagine le petit mieux à venir et on choisit l’émoji positif qui va avec, avant de cliquer sur « Voir mon Haïmoji ».
+5. **Étape 4 – Résumé**  
+   Affichage des trois émojis (pensées, corps, futur mojo) avec pictos 🧠 / 🫀 / 🌟, texte de soutien personnalisé et bouton « Refaire un Haïmoji » qui relance le flow à l’étape 1.
+
+Tu peux dupliquer ce squelette pour explorer d’autres rituels, ajouter de la persistance ou des variantes de textes plus tard. Pour l’instant, tout est prêt à l’emploi pour un usage 100 % client-side. Bon tirage ! ✨
