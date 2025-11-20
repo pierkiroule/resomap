@@ -15,9 +15,10 @@ const pools = {
   mojonance: [m1, m2, m3],
 };
 
-const TriptyqueViewer = ({ emoji1, emoji2, emoji3 }) => {
+const TriptyqueViewer = ({ emoji1, emoji2, emoji3, experienceId }) => {
   const emojis = [emoji1, emoji2, emoji3];
   const categories = ['dissonance', 'profondeur', 'mojonance'];
+  const signature = `${emoji1 ?? ''}-${emoji2 ?? ''}-${emoji3 ?? ''}`;
 
   const triptyque = useMemo(() => {
     return categories.map((category, index) => {
@@ -29,7 +30,7 @@ const TriptyqueViewer = ({ emoji1, emoji2, emoji3 }) => {
         image,
       };
     });
-  }, [emojis.join('')]);
+  }, [experienceId, signature]);
 
   return (
     <div className="triptyque-grid">
