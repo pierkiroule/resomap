@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import Lottie from 'lottie-react';
 import EmojiSelector from './EmojiSelector.jsx';
 import dissonance1 from '../assets/images/dissonance-1.svg';
 import dissonance2 from '../assets/images/dissonance-2.svg';
@@ -18,10 +19,60 @@ import soundP3 from '../assets/sounds/profondeur-3.wav';
 import soundM1 from '../assets/sounds/mojonance-1.wav';
 import soundM2 from '../assets/sounds/mojonance-2.wav';
 import soundM3 from '../assets/sounds/mojonance-3.wav';
+import { createPulseAnimation } from '../utils/createPulseAnimation.js';
 
-const thoughtOptions = ['😡', '😢', '😶', '😤', '😰', '😞', '😵', '😬', '😔'];
-const bodyOptions = ['💔', '🤢', '😖', '😣', '🤯', '😩', '🫨', '🫁', '🔥'];
-const mojoOptions = ['🌱', '✨', '🕊️', '💫', '🌈', '🌞', '💡', '🔓', '🫶'];
+const createOption = (id, value, label, primary, accent) => ({
+  id,
+  value,
+  label,
+  animationData: createPulseAnimation(primary, accent),
+});
+
+const thoughtOptions = [
+  createOption('thought-anger', '😡', 'Colère qui mord', '#ff5f6d', '#ffc371'),
+  createOption('thought-sad', '😢', 'Pleurs ouverts', '#5c7cfa', '#8ec5ff'),
+  createOption('thought-blank', '😶', 'Silence figé', '#b9becd', '#e0e4f1'),
+  createOption('thought-frustrated', '😤', 'Souffle tendu', '#ff8e72', '#ffd6a5'),
+  createOption('thought-anxious', '😰', 'Anxiété diffuse', '#2ec4b6', '#a0f0e4'),
+  createOption('thought-tired', '😞', 'Lassitude douce', '#d7aefb', '#f5d0fe'),
+  createOption('thought-overload', '😵', 'Vertige mental', '#7b61ff', '#d5b8ff'),
+  createOption('thought-awkward', '😬', 'Gêne crispée', '#ffb4a2', '#ffe5d9'),
+  createOption('thought-melancholy', '😔', 'Mélancolie lente', '#6f73d2', '#c0c4ff'),
+];
+
+const bodyOptions = [
+  createOption('body-heart', '💔', 'Cœur serré', '#ff6b6b', '#f8b4b4'),
+  createOption('body-nausea', '🤢', 'Ventre chavire', '#7ed957', '#c8f7c5'),
+  createOption('body-tension', '😖', 'Tempes grincent', '#ffa69e', '#ffd7d0'),
+  createOption('body-shoulders', '😣', 'Épaules tendues', '#ffb347', '#ffe0a3'),
+  createOption('body-head', '🤯', 'Tête crépite', '#ff4d6d', '#ffa6c1'),
+  createOption('body-neck', '😩', 'Nuque lourde', '#a0a7ff', '#d4d7ff'),
+  createOption('body-shake', '🫨', 'Tremblements fins', '#5ec0db', '#bfe7ff'),
+  createOption('body-breath', '🫁', 'Poumons serrés', '#1fab89', '#9bf2ea'),
+  createOption('body-heat', '🔥', 'Chaleur vive', '#ff924c', '#ffd8a8'),
+];
+
+const mojoOptions = [
+  createOption('mojo-sprout', '🌱', 'Graine respire', '#8bc34a', '#d0ffb3'),
+  createOption('mojo-sparkle', '✨', 'Éclat doux', '#ffd166', '#ffe29a'),
+  createOption('mojo-peace', '🕊️', 'Paix glisse', '#6fc3df', '#c4f1ff'),
+  createOption('mojo-orbit', '💫', 'Orbite calme', '#b388ff', '#e5c6ff'),
+  createOption('mojo-rainbow', '🌈', 'Arc-en-ciel', '#ff9a8b', '#fad0c4'),
+  createOption('mojo-sun', '🌞', 'Rayon soleil', '#ffb347', '#ffe29a'),
+  createOption('mojo-idea', '💡', 'Idée claire', '#a4f6f0', '#f4f9ff'),
+  createOption('mojo-unlock', '🔓', 'Porte ouverte', '#ffb4a2', '#ffd6a5'),
+  createOption('mojo-hug', '🫶', 'Mains reliées', '#ff8fab', '#ffd9e2'),
+];
+
+const buildOptionMap = (options) =>
+  options.reduce((acc, option) => {
+    acc[option.value] = option;
+    return acc;
+  }, {});
+
+const THOUGHT_OPTION_MAP = buildOptionMap(thoughtOptions);
+const BODY_OPTION_MAP = buildOptionMap(bodyOptions);
+const MOJO_OPTION_MAP = buildOptionMap(mojoOptions);
 
 const lineThought = {
   '😡': 'La colère grince,',
@@ -108,6 +159,21 @@ function buildHaiku(thought, body, mojo) {
   ];
 }
 
+const OptionVisual = ({ option, size = 'md' }) => {
+  if (!option) {
+    return <span className="summary-placeholder">—</span>;
+  }
+
+  const sizeClass = size === 'lg' ? 'option-visual-lg' : 'option-visual-md';
+
+  return (
+    <div className={`option-visual ${sizeClass}`} aria-label={option.label}>
+      <Lottie className="summary-lottie" animationData={option.animationData} loop autoplay />
+      <span>{option.label}</span>
+    </div>
+  );
+};
+
 function HaemojiPage() {
   const [step, setStep] = useState(0);
   const [thoughtEmoji, setThoughtEmoji] = useState('');
@@ -124,6 +190,9 @@ function HaemojiPage() {
   useEffect(() => () => stopVibe(), []);
 
   const readyForGate = Boolean(thoughtEmoji && bodyEmoji && mojoEmoji);
+  const selectedThoughtOption = THOUGHT_OPTION_MAP[thoughtEmoji];
+  const selectedBodyOption = BODY_OPTION_MAP[bodyEmoji];
+  const selectedMojoOption = MOJO_OPTION_MAP[mojoEmoji];
 
   const stopVibe = () => {
     audioRefs.current.forEach((audio) => {
@@ -210,8 +279,8 @@ function HaemojiPage() {
       <EmojiSelector
         label="Ton bad mood"
         description="Tapote l’emoji qui colle à ce qui tourne dans ta tête."
-        emojis={thoughtOptions}
-        selectedEmoji={thoughtEmoji}
+        options={thoughtOptions}
+        selectedValue={thoughtEmoji}
         onSelect={setThoughtEmoji}
       />
       <div className="step-actions">
@@ -234,8 +303,8 @@ function HaemojiPage() {
       <EmojiSelector
         label="Ton corps"
         description="Montre comment ça se sent physiquement."
-        emojis={bodyOptions}
-        selectedEmoji={bodyEmoji}
+        options={bodyOptions}
+        selectedValue={bodyEmoji}
         onSelect={setBodyEmoji}
       />
       <div className="step-actions">
@@ -258,8 +327,8 @@ function HaemojiPage() {
       <EmojiSelector
         label="Ton futur mojo"
         description="Choisis ce qui incarne le petit mieux qui démarre."
-        emojis={mojoOptions}
-        selectedEmoji={mojoEmoji}
+        options={mojoOptions}
+        selectedValue={mojoEmoji}
         onSelect={setMojoEmoji}
       />
       <div className="step-actions">
@@ -282,15 +351,15 @@ function HaemojiPage() {
       <div className="summary-grid gate">
         <div className="summary-item">
           <span className="summary-label">Bad mood</span>
-          <span className="summary-emoji">{thoughtEmoji || '—'}</span>
+          <OptionVisual option={selectedThoughtOption} />
         </div>
         <div className="summary-item">
           <span className="summary-label">Corps</span>
-          <span className="summary-emoji">{bodyEmoji || '—'}</span>
+          <OptionVisual option={selectedBodyOption} />
         </div>
         <div className="summary-item">
           <span className="summary-label">Mini-solution</span>
-          <span className="summary-emoji">{mojoEmoji || '—'}</span>
+          <OptionVisual option={selectedMojoOption} />
         </div>
       </div>
       <button className="primary-btn large" type="button" disabled={!readyForGate} onClick={handleGenerate}>
@@ -305,15 +374,15 @@ function HaemojiPage() {
       <div className="result-trio">
         <div>
           <span className="result-label">Bad mood</span>
-          <span className="result-emoji">{thoughtEmoji}</span>
+          <OptionVisual option={selectedThoughtOption} size="lg" />
         </div>
         <div>
           <span className="result-label">Corps</span>
-          <span className="result-emoji">{bodyEmoji}</span>
+          <OptionVisual option={selectedBodyOption} size="lg" />
         </div>
         <div>
           <span className="result-label">Mini-solution</span>
-          <span className="result-emoji">{mojoEmoji}</span>
+          <OptionVisual option={selectedMojoOption} size="lg" />
         </div>
       </div>
 
