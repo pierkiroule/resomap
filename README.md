@@ -1,34 +1,41 @@
-# Haïmoji (version ado-adulte)
+# Haïmoji (ado-adulte)
 
-Haïmoji est une mini webapp React + Vite pensée pour aider un ado ou un adulte à prendre un pas de recul sur un souci en choisissant trois émojis-guides. Tout se passe côté front, sans IA ni backend.
+Mini webapp React + Vite pour aider quelqu’un à regarder son bad mood, sentir ce que ça fait dans le corps, puis imaginer la mini-solution qui rend les choses un peu plus respirables. Tout est client-side, sans IA ni backend.
 
 ## But de l’app
-- proposer un rituel rapide autour de trois émojis pour identifier pensées, sensations physiques et futur mojo ;
-- garder l’expérience ultra simple, mobile-first, sans champ de texte ni compte ;
-- offrir un résumé lisible et un texte de soutien léger qui peut être relu à tout moment.
+- guider un focus rapide en 3 émojis (mental, corps, futur mojo) ;
+- rester mobile-first, tactile, sans saisie et sans friction ;
+- livrer un écran final motivant (haïku, visuel, mini vibe audio, CTA premium).
 
 ## Stack & choix techniques
-- React 18 + Vite, écriture en JavaScript.
-- Aucune dépendance UI lourde, uniquement quelques styles dans `src/App.css`.
-- Pas de persistance pour l’instant : l’état vit uniquement le temps de la session.
+- React 18 + Vite, uniquement du JavaScript.
+- Styling custom léger dans `src/App.css`.
+- Audio et visuels tirés d’actifs locaux (`src/assets`), aucune requête réseau.
 
-## Lancer le projet
+## Lancer
 ```bash
 npm install
 npm run dev
 ```
-Ensuite, ouvre l’URL fournie par Vite (généralement http://localhost:5173) sur ton navigateur mobile ou desktop.
+Ouvre ensuite http://localhost:5173 sur mobile ou desktop.
 
-## Déroulé des étapes Haïmoji
-1. **Étape 0 – Accueil**  
-   Présentation rapide, phrase-mantra « Un émoji comme un rayon de soleil dans ton nuage de problème » et bouton « Commencer ».
-2. **Étape 1 – Émoji des pensées**  
-   Une grille de 15 émojis adaptés aux pensées/bad mood. Choisir ton mental du moment débloque « Suivant ».
-3. **Étape 2 – Émoji du corps**  
-   Même UI, mais orientée sensations physiques (tension, chaleur, fatigue, etc.). L’émoji choisi valide l’étape.
-4. **Étape 3 – Émoji du futur mojo**  
-   On imagine le petit mieux à venir et on choisit l’émoji positif qui va avec, avant de cliquer sur « Voir mon Haïmoji ».
-5. **Étape 4 – Résumé**  
-   Affichage des trois émojis (pensées, corps, futur mojo) avec pictos 🧠 / 🫀 / 🌟, texte de soutien personnalisé et bouton « Refaire un Haïmoji » qui relance le flow à l’étape 1.
+## Flow Haïmoji
+1. **Hero / Accueil**  
+   Carte sombre “HAÏMOJI•° – Si t’es kéblo, retrouve ton mojo” + bouton “Commencer”.
+2. **1) Ton bad mood**  
+   Grille d’émojis mentaux 😡 😢 😶 😤 😰 😞 😵 😬 😔. Tu valides et tu passes à l’étape suivante.
+3. **2) Ce que ça te fait dans le corps**  
+   Émojis corporels 💔 🤢 😖 😣 🤯 😩 🫨 🫁 🔥, toujours le même composant `EmojiSelector`.
+4. **3) Ta mini-solution**  
+   Émojis positifs 🌱 ✨ 🕊️ 💫 🌈 🌞 💡 🔓 🫶 pour visualiser le petit mieux qui arrive.
+5. **4) Gate “Ton Haïmoji”**  
+   Récapitulatif du trio et bouton « Générer mon Haïmoji » (désactivé tant que les trois choix ne sont pas faits).
+6. **Écran résultat**  
+   - trio emojis mis en avant ;  
+   - mini-haïku généré (phrase par emoji) ;  
+   - triptyque visuel (3 images locales tirées au hasard) ;  
+   - mini vibe audio de 20 s (3 samples locaux mixés, bouton ▶️/⏸️) ;  
+   - encart “Option Premium · MojoMaster” listant les futures features.  
+   Bouton « Refaire un Haïmoji » pour relancer le rituel.
 
-Tu peux dupliquer ce squelette pour explorer d’autres rituels, ajouter de la persistance ou des variantes de textes plus tard. Pour l’instant, tout est prêt à l’emploi pour un usage 100 % client-side. Bon tirage ! ✨
+Tu peux partir de ce squelette pour ajouter persistance, sauvegardes ou autres rituels. Bon tirage ! ✨

@@ -1,70 +1,199 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import EmojiSelector from './EmojiSelector.jsx';
+import dissonance1 from '../assets/images/dissonance-1.svg';
+import dissonance2 from '../assets/images/dissonance-2.svg';
+import dissonance3 from '../assets/images/dissonance-3.svg';
+import profondeur1 from '../assets/images/profondeur-1.svg';
+import profondeur2 from '../assets/images/profondeur-2.svg';
+import profondeur3 from '../assets/images/profondeur-3.svg';
+import mojonance1 from '../assets/images/mojonance-1.svg';
+import mojonance2 from '../assets/images/mojonance-2.svg';
+import mojonance3 from '../assets/images/mojonance-3.svg';
+import soundD1 from '../assets/sounds/dissonance-1.wav';
+import soundD2 from '../assets/sounds/dissonance-2.wav';
+import soundD3 from '../assets/sounds/dissonance-3.wav';
+import soundP1 from '../assets/sounds/profondeur-1.wav';
+import soundP2 from '../assets/sounds/profondeur-2.wav';
+import soundP3 from '../assets/sounds/profondeur-3.wav';
+import soundM1 from '../assets/sounds/mojonance-1.wav';
+import soundM2 from '../assets/sounds/mojonance-2.wav';
+import soundM3 from '../assets/sounds/mojonance-3.wav';
 
-const thoughtOptions = ['😢', '😡', '😰', '😶', '🤯', '😔', '😤', '🤔', '🙄', '😴', '💔', '🌧️', '🌪️', '😵‍💫', '😬'];
-const bodyOptions = ['🤢', '🤮', '🤕', '🤒', '😖', '😣', '😫', '😵‍💫', '💣', '💥', '💫', '💦', '😮‍💨', '😓', '🫨'];
-const mojoOptions = ['✨', '😊', '😌', '😎', '🌈', '☀️', '🌱', '🕊️', '🐦', '💪', '🧘', '🎧', '🤝', '💫', '🎈'];
+const thoughtOptions = ['😡', '😢', '😶', '😤', '😰', '😞', '😵', '😬', '😔'];
+const bodyOptions = ['💔', '🤢', '😖', '😣', '🤯', '😩', '🫨', '🫁', '🔥'];
+const mojoOptions = ['🌱', '✨', '🕊️', '💫', '🌈', '🌞', '💡', '🔓', '🫶'];
 
-const mojoAffirmations = {
-  '✨': 'Tu rallumes déjà une petite étincelle intérieure.',
-  '😊': 'Ton sourire commence à revenir, même timidement.',
-  '😌': 'Un soupir plus doux s’installe dans ton corps.',
-  '😎': 'Tu reprends un peu de confiance dans ta façon unique de gérer.',
-  '🌈': 'Tu te rappelles que la pluie finit toujours par s’arrêter.',
-  '☀️': 'Une éclaircie se dessine, rien qu’en te posant ici.',
-  '🌱': 'Quelque chose de neuf pousse discrètement en toi.',
-  '🕊️': 'Tu mérites cette paix lente qui arrive petit à petit.',
-  '🐦': 'Ton horizon s’élargit d’un battement d’ailes.',
-  '💪': 'Tu recontactes ta force, pas besoin qu’elle soit parfaite.',
-  '🧘': 'Ton souffle devient un peu plus ample.',
-  '🎧': 'Tu peux baisser le volume des pensées quand tu veux.',
-  '🤝': 'Tu n’es pas obligé·e de porter ça seul·e.',
-  '💫': 'Même les tours de montagnes russes finissent par ralentir.',
-  '🎈': 'Il y a une part de toi qui peut flotter au-dessus du bruit.',
+const lineThought = {
+  '😡': 'La colère grince,',
+  '😢': 'Les larmes scintillent,',
+  '😶': 'Le silence tourne,',
+  '😤': 'Le souffle cogne,',
+  '😰': 'L’angoisse s’insinue,',
+  '😞': 'La lassitude tombe,',
+  '😵': 'Ça tourne en rond,',
+  '😬': 'Le mental accroche,',
+  '😔': 'Un nuage s’attarde,',
 };
+const lineBody = {
+  '💔': 'Le cœur tire un peu,',
+  '🤢': 'Le ventre chavire,',
+  '😖': 'Les tempes grincent,',
+  '😣': 'Les épaules se crispen,',
+  '🤯': 'La tête crépite,',
+  '😩': 'La nuque soupire,',
+  '🫨': 'Tout tremble doucement,',
+  '🫁': 'Les poumons serrent,',
+  '🔥': 'La chaleur monte,',
+};
+const lineMojo = {
+  '🌱': 'Une graine respire.',
+  '✨': 'Une étincelle persiste.',
+  '🕊️': 'Une paix glisse.',
+  '💫': 'Une orbite s’adoucit.',
+  '🌈': 'Une éclaircie s’annonce.',
+  '🌞': 'Un soleil se pointe.',
+  '💡': 'Une idée s’allume.',
+  '🔓': 'Une porte s’entrebâille.',
+  '🫶': 'Tes mains se rejoignent.',
+};
+
+const triptychSources = [
+  { id: 'd1', label: 'Nuage indocile', src: dissonance1 },
+  { id: 'd2', label: 'Contours fiévreux', src: dissonance2 },
+  { id: 'd3', label: 'Éclats de colère', src: dissonance3 },
+  { id: 'p1', label: 'Épaisseur du corps', src: profondeur1 },
+  { id: 'p2', label: 'Souffle profond', src: profondeur2 },
+  { id: 'p3', label: 'Tension diffuse', src: profondeur3 },
+  { id: 'm1', label: 'Pousse mojo', src: mojonance1 },
+  { id: 'm2', label: 'Lumière douce', src: mojonance2 },
+  { id: 'm3', label: 'Élan mojo', src: mojonance3 },
+];
+
+const audioClips = [
+  { id: 'sd1', label: 'Beat nuage', src: soundD1 },
+  { id: 'sd2', label: 'Fracas doux', src: soundD2 },
+  { id: 'sd3', label: 'Orage lent', src: soundD3 },
+  { id: 'sp1', label: 'Pulse thorax', src: soundP1 },
+  { id: 'sp2', label: 'Basses viscères', src: soundP2 },
+  { id: 'sp3', label: 'Souffle granulaire', src: soundP3 },
+  { id: 'sm1', label: 'Clair mojo', src: soundM1 },
+  { id: 'sm2', label: 'Rayon souple', src: soundM2 },
+  { id: 'sm3', label: 'Métronome chill', src: soundM3 },
+];
 
 const STEP_LABELS = {
-  0: 'Préparation',
-  1: 'Étape 1 sur 4',
-  2: 'Étape 2 sur 4',
-  3: 'Étape 3 sur 4',
-  4: 'Étape finale',
+  0: 'Accueil',
+  1: '1) Ton bad mood',
+  2: '2) Ton corps',
+  3: '3) Mini-solution',
+  4: '4) Prêt à générer',
+  5: 'Résultat',
 };
+
+function pickRandomItems(collection, count) {
+  const pool = [...collection];
+  const picks = [];
+  while (pool.length && picks.length < count) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picks.push(pool.splice(idx, 1)[0]);
+  }
+  return picks;
+}
+
+function buildHaiku(thought, body, mojo) {
+  return [
+    lineThought[thought] ?? 'Tes pensées murmurent,',
+    lineBody[body] ?? 'Ton corps clignote,',
+    lineMojo[mojo] ?? 'Une éclaircie respire.',
+  ];
+}
 
 function HaemojiPage() {
   const [step, setStep] = useState(0);
   const [thoughtEmoji, setThoughtEmoji] = useState('');
   const [bodyEmoji, setBodyEmoji] = useState('');
   const [mojoEmoji, setMojoEmoji] = useState('');
+  const [haikuLines, setHaikuLines] = useState(['', '', '']);
+  const [triptych, setTriptych] = useState([]);
+  const [vibeMix, setVibeMix] = useState([]);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
-  const supportiveLine = useMemo(() => {
-    if (!mojoEmoji) {
-      return 'Ton Haïmoji peut évoluer aussi souvent que tu en as besoin.';
+  const audioRefs = useRef([]);
+  const vibeTimeoutRef = useRef(null);
+
+  useEffect(() => () => stopVibe(), []);
+
+  const readyForGate = Boolean(thoughtEmoji && bodyEmoji && mojoEmoji);
+
+  const stopVibe = () => {
+    audioRefs.current.forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+    audioRefs.current = [];
+    if (vibeTimeoutRef.current) {
+      clearTimeout(vibeTimeoutRef.current);
+      vibeTimeoutRef.current = null;
     }
-    return mojoAffirmations[mojoEmoji] ?? 'Ton futur toi respire un peu mieux, ici et maintenant.';
-  }, [mojoEmoji]);
+    setIsAudioPlaying(false);
+  };
+
+  const startVibe = () => {
+    if (!vibeMix.length) return;
+    stopVibe();
+    audioRefs.current = vibeMix.map((clip) => {
+      const audio = new Audio(clip.src);
+      audio.loop = true;
+      audio.volume = 0.35;
+      audio.play();
+      return audio;
+    });
+    setIsAudioPlaying(true);
+    vibeTimeoutRef.current = setTimeout(() => {
+      stopVibe();
+    }, 20000);
+  };
+
+  const handleToggleVibe = () => {
+    if (!vibeMix.length) return;
+    if (isAudioPlaying) {
+      stopVibe();
+    } else {
+      startVibe();
+    }
+  };
 
   const goToStep = (nextStep) => {
     setStep(nextStep);
   };
 
+  const handleGenerate = () => {
+    if (!readyForGate) return;
+    stopVibe();
+    setHaikuLines(buildHaiku(thoughtEmoji, bodyEmoji, mojoEmoji));
+    setTriptych(pickRandomItems(triptychSources, 3));
+    setVibeMix(pickRandomItems(audioClips, 3));
+    setStep(5);
+  };
+
   const resetFlow = () => {
+    stopVibe();
     setThoughtEmoji('');
     setBodyEmoji('');
     setMojoEmoji('');
+    setHaikuLines(['', '', '']);
+    setTriptych([]);
+    setVibeMix([]);
     setStep(1);
   };
 
-  const readyForSummary = Boolean(thoughtEmoji && bodyEmoji && mojoEmoji);
-
   const renderIntro = () => (
-    <section className="haemoji-step" key="intro">
-      <p className="step-eyebrow">Étape 0 — Accueil</p>
-      <h1>Haïmoji</h1>
-      <p className="quote">« Un émoji comme un rayon de soleil dans ton nuage de problème. »</p>
+    <section className="haemoji-step intro" key="intro">
+      <p className="intro-title">HAÏMOJI•°</p>
+      <h1>Si t’es kéblo, retrouve ton mojo</h1>
       <p className="step-body">
-        Pense à un truc qui te prend la tête en ce moment. On va juste le regarder de loin, comme un nuage à l’horizon.
-        Tu n’as rien à écrire, juste choisir des émojis.
+        Choisis juste trois émojis. Pas besoin d’écrire ni de tout raconter. Tu regardes ton nuage, ton corps, puis la
+        sensation positive qui pointe. Ready?
       </p>
       <button className="primary-btn" type="button" onClick={() => goToStep(1)}>
         Commencer
@@ -74,15 +203,13 @@ function HaemojiPage() {
 
   const renderThoughtStep = () => (
     <section className="haemoji-step" key="thought">
-      <p className="step-eyebrow">Étape 1 — Tes pensées</p>
-      <h2>Émoji des pensées</h2>
+      <h2>1) Ton bad mood</h2>
       <p className="step-body">
-        Pense à ton problème ou ton bad mood. Imagine-le comme un nuage qui flotte au loin. Choisis l’émoji qui ressemble
-        aux pensées qui tournent dans ta tête quand tu y penses.
+        « C’est quoi qui te saoule ? Pense à ton bad mood du moment. » Choisis l’emoji qui va avec tes pensées.
       </p>
       <EmojiSelector
-        label="Tes pensées"
-        description="Tapote l’émoji qui décrit le mieux ton mental du moment."
+        label="Ton bad mood"
+        description="Tapote l’emoji qui colle à ce qui tourne dans ta tête."
         emojis={thoughtOptions}
         selectedEmoji={thoughtEmoji}
         onSelect={setThoughtEmoji}
@@ -92,7 +219,7 @@ function HaemojiPage() {
           Retour
         </button>
         <button className="primary-btn" type="button" disabled={!thoughtEmoji} onClick={() => goToStep(2)}>
-          Suivant
+          Étape suivante
         </button>
       </div>
     </section>
@@ -100,15 +227,13 @@ function HaemojiPage() {
 
   const renderBodyStep = () => (
     <section className="haemoji-step" key="body">
-      <p className="step-eyebrow">Étape 2 — Ton corps</p>
-      <h2>Émoji du corps</h2>
+      <h2>2) Ce que ça te fait dans le corps</h2>
       <p className="step-body">
-        Pense à ton corps quand ce soucis débarque. Où ça serre ? Où ça chauffe ? Choisis l’émoji qui ressemble à ce que
-        ton corps ressent.
+        « Où ça bloque en toi ? Sensation ? Tension ? Choisis l’emoji qui match. ».
       </p>
       <EmojiSelector
         label="Ton corps"
-        description="Tapote l’émoji qui colle à la sensation corporelle."
+        description="Montre comment ça se sent physiquement."
         emojis={bodyOptions}
         selectedEmoji={bodyEmoji}
         onSelect={setBodyEmoji}
@@ -118,7 +243,7 @@ function HaemojiPage() {
           Retour
         </button>
         <button className="primary-btn" type="button" disabled={!bodyEmoji} onClick={() => goToStep(3)}>
-          Suivant
+          Étape suivante
         </button>
       </div>
     </section>
@@ -126,15 +251,13 @@ function HaemojiPage() {
 
   const renderMojoStep = () => (
     <section className="haemoji-step" key="mojo">
-      <p className="step-eyebrow">Étape 3 — Ton futur mojo</p>
-      <h2>Émoji du futur mojo</h2>
+      <h2>3) Ta mini-solution qui fait du bien</h2>
       <p className="step-body">
-        Imagine que ce problème commence à se débloquer, même un tout petit peu. Choisis l’émoji qui ressemble à la
-        sensation positive que tu ressentirais.
+        « Imagine le moment où ça va un peu mieux. Pas parfait, juste mieux. Quel emoji résonne avec ça ? »
       </p>
       <EmojiSelector
         label="Ton futur mojo"
-        description="Choisis l’émoji qui donne la couleur du petit mieux."
+        description="Choisis ce qui incarne le petit mieux qui démarre."
         emojis={mojoOptions}
         selectedEmoji={mojoEmoji}
         onSelect={setMojoEmoji}
@@ -143,56 +266,110 @@ function HaemojiPage() {
         <button className="ghost-btn" type="button" onClick={() => goToStep(2)}>
           Retour
         </button>
-        <button
-          className="primary-btn"
-          type="button"
-          disabled={!mojoEmoji}
-          onClick={() => goToStep(4)}
-        >
-          Voir mon Haïmoji
+        <button className="primary-btn" type="button" disabled={!mojoEmoji} onClick={() => goToStep(4)}>
+          Étape suivante
         </button>
       </div>
     </section>
   );
 
-  const renderSummary = () => (
-    <section className="haemoji-step summary" key="summary">
-      <p className="step-eyebrow">Étape 4 — Résumé</p>
-      <h2>Ton Haïmoji du moment</h2>
+  const renderGateStep = () => (
+    <section className="haemoji-step" key="gate">
+      <h2>4) Ton Haïmoji•°</h2>
       <p className="step-body">
-        Tu viens de faire un pas en arrière pour regarder ton problème. Tu as repéré ce que ça te fait penser, ce que ça
-        fait dans ton corps, et à quoi ça pourrait ressembler quand ça ira un peu mieux.
+        Pas encore calculé. Tu as ton trio prêt ? Clique ci-dessous pour générer l’affichage complet.
       </p>
-      {readyForSummary && (
-        <div className="summary-grid" aria-live="polite">
-          <div className="summary-item">
-            <span className="summary-label">Tes pensées</span>
-            <span className="summary-icon">🧠</span>
-            <span className="summary-emoji">{thoughtEmoji}</span>
-          </div>
-          <div className="summary-item">
-            <span className="summary-label">Ton corps</span>
-            <span className="summary-icon">🫀</span>
-            <span className="summary-emoji">{bodyEmoji}</span>
-          </div>
-          <div className="summary-item">
-            <span className="summary-label">Ton futur mojo</span>
-            <span className="summary-icon">🌟</span>
-            <span className="summary-emoji">{mojoEmoji}</span>
-          </div>
+      <div className="summary-grid gate">
+        <div className="summary-item">
+          <span className="summary-label">Bad mood</span>
+          <span className="summary-emoji">{thoughtEmoji || '—'}</span>
         </div>
-      )}
-      <p className="supportive-line">{supportiveLine}</p>
-      <p className="supportive-paragraph">
-        Ce trio d’émojis, c’est ton Haïmoji du moment. Tu peux simplement le garder en tête, l’écrire quelque part ou
-        refaire un tirage quand tu veux. Reviens dès que tu as besoin d’un autre pas de côté.
-      </p>
-      <div className="step-actions">
-        <button className="primary-btn" type="button" onClick={resetFlow}>
-          Refaire un Haïmoji
+        <div className="summary-item">
+          <span className="summary-label">Corps</span>
+          <span className="summary-emoji">{bodyEmoji || '—'}</span>
+        </div>
+        <div className="summary-item">
+          <span className="summary-label">Mini-solution</span>
+          <span className="summary-emoji">{mojoEmoji || '—'}</span>
+        </div>
+      </div>
+      <button className="primary-btn large" type="button" disabled={!readyForGate} onClick={handleGenerate}>
+        Générer mon Haïmoji
+      </button>
+    </section>
+  );
+
+  const renderResultStep = () => (
+    <section className="haemoji-step result" key="result">
+      <h2>Ton Haïmoji•°</h2>
+      <div className="result-trio">
+        <div>
+          <span className="result-label">Bad mood</span>
+          <span className="result-emoji">{thoughtEmoji}</span>
+        </div>
+        <div>
+          <span className="result-label">Corps</span>
+          <span className="result-emoji">{bodyEmoji}</span>
+        </div>
+        <div>
+          <span className="result-label">Mini-solution</span>
+          <span className="result-emoji">{mojoEmoji}</span>
+        </div>
+      </div>
+
+      <div className="haiku-block">
+        <h3>Ton mini-haïku</h3>
+        <p>{haikuLines[0]}</p>
+        <p>{haikuLines[1]}</p>
+        <p>{haikuLines[2]}</p>
+      </div>
+
+      <div className="triptych-block">
+        <h3>Ton triptyque visuel</h3>
+        <div className="triptych-grid">
+          {triptych.map((panel) => (
+            <div className="triptych-cell" key={panel.id}>
+              <img src={panel.src} alt={panel.label} />
+              <span>{panel.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="audio-block">
+        <div className="audio-top">
+          <div>
+            <h3>Ta mini-vibe audio (20 sec)</h3>
+            <p className="step-body small">
+              Trois samples légers mixés. Clique, écoute vingt secondes, respire.
+            </p>
+          </div>
+          <button className="ghost-btn audio-btn" type="button" onClick={handleToggleVibe} disabled={!vibeMix.length}>
+            {isAudioPlaying ? '⏸️ Pause' : '▶️ Écouter'}
+          </button>
+        </div>
+        <div className="clip-tags">
+          {vibeMix.map((clip) => (
+            <span key={clip.id}>{clip.label}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="premium-block">
+        <h3>Option Premium · MojoMaster</h3>
+        <ul>
+          <li>Vidéo 3 min</li>
+          <li>Sons stylés</li>
+          <li>Cosmoji vivant</li>
+        </ul>
+        <button className="premium-btn" type="button">
+          Devenir MojoMaster
         </button>
-        <button className="ghost-btn placeholder" type="button" disabled>
-          Plus tard : sauver ce Haïmoji
+      </div>
+
+      <div className="step-actions">
+        <button className="ghost-btn" type="button" onClick={resetFlow}>
+          Refaire un Haïmoji
         </button>
       </div>
     </section>
@@ -203,20 +380,28 @@ function HaemojiPage() {
     if (step === 1) return renderThoughtStep();
     if (step === 2) return renderBodyStep();
     if (step === 3) return renderMojoStep();
-    return renderSummary();
+    if (step === 4) return renderGateStep();
+    return renderResultStep();
   };
 
   return (
     <div className="haemoji-shell">
-      <div className="haemoji-card">
-        <div className="haemoji-card-header">
-          <div>
-            <p className="badge">Haïmoji</p>
-            <p className="helper-text">Un mini rituel emoji pour prendre un peu de recul.</p>
+      <div className="haemoji-stack">
+        <header className="haemoji-hero">
+          <span className="hero-tag">Haïmoji</span>
+          <h1>
+            Si t’es kéblo,
+            <br />
+            retrouve ton mojo
+          </h1>
+          <p>On regarde le souci, le corps, puis le petit mieux qui débarque.</p>
+        </header>
+        <div className="haemoji-card">
+          <div className="haemoji-card-header">
+            <p className="step-indicator">{STEP_LABELS[step]}</p>
           </div>
-          <span className="step-indicator">{STEP_LABELS[step]}</span>
+          {renderStep()}
         </div>
-        {renderStep()}
       </div>
     </div>
   );
