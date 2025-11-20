@@ -8,7 +8,7 @@ const videoMap = {
   mojonance: mojonanceVideo,
 };
 
-const VideoSampler = ({ emojis }) => {
+const VideoSampler = ({ emojis, experienceId }) => {
   if (!emojis) return null;
 
   const playlist = ['dissonance', 'profondeur', 'mojonance']
@@ -22,8 +22,8 @@ const VideoSampler = ({ emojis }) => {
   return (
     <div className="video-grid">
       {playlist.map(({ category, emoji, src }) => (
-        <div key={category} className="video-card">
-          <video src={src} autoPlay loop muted playsInline />
+        <div key={`${category}-${experienceId}`} className="video-card">
+          <video key={`${category}-video-${experienceId}`} src={src} autoPlay loop muted playsInline />
           <span>{emoji}</span>
         </div>
       ))}

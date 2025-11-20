@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '../components/Box.jsx';
-import { generateHaiku } from '../components/HaikuGenerator.jsx';
 import { useFlow } from '../context/FlowContext.jsx';
 
 const Haiku = () => {
   const navigate = useNavigate();
-  const { haiku, setHaiku, hasCompleteSelection } = useFlow();
+  const { haiku, refreshExperience, hasCompleteSelection } = useFlow();
 
   useEffect(() => {
     if (!hasCompleteSelection) {
@@ -14,9 +13,9 @@ const Haiku = () => {
       return;
     }
     if (!haiku) {
-      setHaiku(generateHaiku());
+      refreshExperience();
     }
-  }, [haiku, hasCompleteSelection, navigate, setHaiku]);
+  }, [haiku, hasCompleteSelection, navigate, refreshExperience]);
 
   if (!hasCompleteSelection) return null;
 
